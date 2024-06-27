@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pokedex</title>
+  <link rel="stylesheet" href="assets/fonts/fonts.css">
+  <link rel="stylesheet" href="style/style.css">
+  <script src="script/script.js"></script>
+</head>
+
+<body>
+  <div id="limiter">
+    <header>
+      <h1>Der Pokedex für Pokefans</h1>
+    </header>
+    <div class="pokedex">
+      <div class="topScreen">
+        <div id="pokeScreen" class="screen">
+          <nav>
+            <ul>
+              <li onclick="openPage('misc', this, 'rgba(255, 125, 255, 0.15)')" class="topTabLink" id="defaultTab">
+                Allgemein</li>
+              <li onclick="openPage('stats', this, 'rgba(255, 255, 125, 0.15)')" class="topTabLink">Stats</li>
+              <li onclick="openPage('evo', this, 'rgba(125, 255, 255, 0.15)')" class="topTabLink">Entwicklungen</li>
+            </ul>
+          </nav>
+          <div id="misc" class="topTab"></div>
+          <div id="stats" class="topTab"></div>
+          <div id="evo" class="topTab"></div>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="bottomScreen">
+        <div class="controller">
+          <div class="lights">
+            <div class="stripes">
+              <div class="hole"></div>
+              <div class="hole"></div>
+              <div class="hole"></div>
+            </div>
+            <div class="ledLight">
+              <div id="ledBlue" class="led blue"></div>
+              <div id="ledGreen" class="led green"></div>
+              <div id="ledYellow" class="led yellow"></div>
+            </div>
+          </div>
+          <img src="assets/img/previewtext.png" class="logo" alt="pokedexLogo">
+          <div class="dpad">
+            <div class="up">
+              <img class="arrow" src="assets/icons/caret-up-solid.svg" alt="caretUp" onclick="move('-14.3%')">
+            </div>
+            <div class="left">
+              <img class="arrow" src="assets/icons/caret-left-solid.svg" alt="caretLeft">
+            </div>
+            <div class="center"></div>
+            <div class="right">
+              <img src="assets/icons/caret-right-solid.svg" alt="caretRight" class="arrow">
+            </div>
+            <div class="down">
+              <img src="assets/icons/caret-down-solid.svg" alt="caretDown" class="arrow" onclick="move('14.3%')">
+            </div>
+          </div>
+        </div>
+        <div id="pokeDetails" class="screen">
+          <div id="loadbar" class="loadbar">
+            <p id="loadProgressText"></p>
+            <div id="loadProgress" class="loadProgress"></div>
+          </div>
+          <div class="smallScreen">
+            <div class="mainScreen">
+              <div id="barView">
+                <div class="pokeBar last3" data-type1="normal" data-type2="fighting">
+                  <div class="barStatus">
+                    <p class="PokeId">0001</p>
+                    <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/1.gif"
+                      alt="">
+                    <p class="pokeName">Name</p>
+                  </div>
+                  <div class="barType">
+                    <img src="assets/icons/1.png" alt="">
+                    <img src="assets/icons/2.png" alt="">
+                  </div>
+                </div>
+                <div class="pokeBar last2" data-type1="flying" data-type2="poison">
+                  <div class="barStatus">
+                    <p class="PokeId">0002</p>
+                    <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/2.gif"
+                      alt="">
+                    <p class="pokeName">Name</p>
+                  </div>
+                  <div class="barType">
+                    <img src="assets/icons/3.png" alt="">
+                    <img src="assets/icons/4.png" alt="">
+                  </div>
+                </div>
+                <div class="pokeBar last1" data-type1="ground" data-type2="rock">
+                  <div class="barStatus">
+                    <p class="PokeId">0003</p>
+                    <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/3.gif"
+                      alt="">
+                    <p class="pokeName">Name</p>
+                  </div>
+                  <div class="barType">
+                    <img src="assets/icons/5.png" alt="">
+                    <img src="assets/icons/6.png" alt="">
+                  </div>
+                </div>
+                <div class="pokeBar last" data-type1="bug" data-type2="ghost">
+                  <div class="barStatus">
+                    <p class="PokeId">0004</p>
+                    <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/4.gif"
+                      alt="">
+                    <p class="pokeName">Name</p>
+                  </div>
+                  <div class="barType">
+                    <img src="assets/icons/7.png" alt="">
+                    <img src="assets/icons/8.png" alt="">
+                  </div>
+                </div>
+                <div class="pokeBar current" data-type1="steel" data-type2="fire">
+                  <div class="barStatus">
+                    <p class="PokeId">0005</p>
+                    <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/5.gif"
+                      alt="">
+                    <p class="pokeName">Name</p>
+                  </div>
+                  <div class="barType">
+                    <img src="assets/icons/9.png" alt="">
+                    <img src="assets/icons/10.png" alt="">
+                  </div>
+                </div>
+                <div class="pokeBar next" data-type1="water" data-type2="grass">
+                  <div class="barStatus">
+                    <p class="PokeId">0006</p>
+                    <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/6.gif"
+                      alt="">
+                    <p class="pokeName">Name</p>
+                  </div>
+                  <div class="barType">
+                    <img src="assets/icons/11.png" alt="">
+                    <img src="assets/icons/12.png" alt="">
+                  </div>
+                </div>
+                <div class="pokeBar next1" data-type1="electric" data-type2="psychic">
+                  <div class="barStatus">
+                    <p class="PokeId">0007</p>
+                    <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/7.gif"
+                      alt="">
+                    <p class="pokeName">Name</p>
+                  </div>
+                  <div class="barType">
+                    <img src="assets/icons/13.png" alt="">
+                    <img src="assets/icons/14.png" alt="">
+                  </div>
+                </div>
+                <div class="pokeBar next2" data-type1="ice" data-type2="dragon">
+                  <div class="barStatus">
+                    <p class="PokeId">0008</p>
+                    <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/8.gif"
+                      alt="">
+                    <p class="pokeName">Name</p>
+                  </div>
+                  <div class="barType">
+                    <img src="assets/icons/15.png" alt="">
+                    <img src="assets/icons/16.png" alt="">
+                  </div>
+                </div>
+                <div class="pokeBar next3" data-type1="dark" data-type2="fairy">
+                  <div class="barStatus">
+                    <p class="PokeId">0009</p>
+                    <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/9.gif"
+                      alt="">
+                    <p class="pokeName">Name</p>
+                  </div>
+                  <div class="barType">
+                    <img src="assets/icons/17.png" alt="">
+                    <img src="assets/icons/18.png" alt="">
+                  </div>
+                </div>
+              </div>
+              <div id="cardView" class="d-none"></div>
+            </div>
+            <div class="iconbar">
+              <div>
+                <input type="search" name="search" id="search" placeholder="">
+              </div>
+              <div>
+                <img src="assets/icons/filter-solid.svg" alt="filterIcon" onclick="showMenu('filter')">
+              </div>
+              <div>
+                <img id="view" src="assets/icons/table-cells-solid.svg" alt="filterIcon" onclick="changeView('view')">
+              </div>
+              <div id="filter" class="filterContainer d-none">
+                <button>Anwenden</button>
+                <button onclick="closeMenu('filter')">Schließen</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer>Copyright 2024 Jan Holtschke</footer>
+  </div>
+</body>
+
+</html>

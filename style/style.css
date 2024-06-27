@@ -1,0 +1,545 @@
+:root {
+  --normal: #A8A77A;
+  --fighting: #C22E28;
+  --flying: #A98FF3;
+  --poison: #A33EA1;
+  --ground: #E2BF65;
+  --rock: #B6A136;
+  --bug: #A6B91A;
+  --ghost: #735797;
+  --steel: #B7B7CE;
+  --fire: #EE8130;
+  --water: #6390F0;
+  --grass: #7AC74C;
+  --electric: #F7D02C;
+  --psychic: #F95587;
+  --ice: #96D9D6;
+  --dragon: #6F35FC;
+  --dark: #705746;
+  --fairy: #D685AD;
+  --stellar: #FFDEAD;
+  --unknown: #68A090;
+}
+
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+
+}
+
+body {
+  font-family: 'Fira Code';
+  display: flex;
+  justify-content: center;
+  background: linear-gradient(to bottom, #3469bb, white);
+}
+
+.d-none {
+  display: none !important;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+#limiter {
+  height: 100vh;
+  width: 100vw;
+  max-width: 1920px;
+  background: linear-gradient(to bottom, #3469bb, white);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+header,
+footer {
+  display: flex;
+  justify-content: center;
+  padding-top: 16px;
+  color: #fecc00;
+  font-size: 24px;
+  font-family: 'PokeSolid';
+  text-shadow: -2px 0px #3469bb, 0 2px #3469bb, 2px 0 #3469bb, 0 -2px #3469bb;
+}
+
+footer {
+  font-size: 16px;
+  text-shadow: none;
+  color: rgb(40, 40, 40);
+}
+
+.pokedex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.topScreen,
+.bottomScreen {
+  background-color: rgb(226, 24, 24);
+  width: 80vw;
+  max-width: 1440px;
+  height: 39vh;
+  border: 8px solid rgb(40, 40, 40);
+  border-radius: 32px;
+  display: flex;
+  box-shadow: 0 0 8px 4px rgba(0, 0, 0, 0.4);
+}
+
+.divider {
+  width: 70vw;
+  max-width: 1100px;
+  height: 2vh;
+  border-left: 16px solid rgb(40, 40, 40);
+  border-right: 16px solid rgb(40, 40, 40);
+  border-radius: 32px;
+  background: linear-gradient(to right, rgb(225, 25, 25) 33%, rgb(40, 40, 40) 34%, rgb(225, 25, 25) 33%, rgb(225, 25, 25) 66%, rgb(40, 40, 40) 67%, rgb(225, 25, 25) 66%);
+  box-shadow: inset 0 0 4px 2px rgba(0, 0, 0, 0.4);
+}
+
+.screen {
+  position: relative;
+  width: 100%;
+  margin: 32px;
+  padding: 8px;
+  border: 2px solid rgb(40, 40, 40);
+  background-color: whitesmoke;
+  box-shadow: inset 0 0 4px 4px rgba(0, 0, 0, 0.4);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.topScreen nav,
+.topScreen ul {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 2px;
+  font-size: 16px;
+  font-weight: 600;
+  list-style: none;
+
+}
+
+.topScreen li {
+  width: 33.3%;
+  height: 56px;
+  border: 1px solid rgb(40, 40, 40);
+  border-block-end-style: none;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.topScreen li:hover {
+  background-color: rgba(52, 105, 187, 0.4);
+}
+
+.topTab {
+  display: none;
+  flex: 1;
+  width: auto;
+  height: auto;
+  border: 1px solid rgb(40, 40, 40);
+  border-block-start: none;
+  border-radius: 0 0 8px 8px;
+}
+
+#stats {
+  background-color: rgba(255, 255, 125, 0.15);
+}
+
+#evo {
+  background-color: rgba(125, 255, 255, 0.15);
+}
+
+#misc {
+  background-color: rgba(255, 125, 255, 0.15);
+}
+
+.bottomScreen .screen {
+  margin-left: 16px;
+  width: 75%;
+}
+
+.controller {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin: 16px;
+}
+
+.lights {
+  position: relative;
+  height: auto;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.logo {
+  height: 80px;
+  margin: 16px;
+}
+
+.ledLight {
+  display: flex;
+  flex-direction: column;
+}
+
+.stripes {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 16%;
+  height: 56%;
+  display: flex;
+  justify-content: space-evenly;
+  gap: 8px;
+  transform: rotate(45deg);
+}
+
+.hole {
+  width: 8px;
+  height: 72px;
+  background-color: rgb(225, 25, 25);
+  border: 1px solid rgb(40, 40, 40);
+  border-radius: 4px;
+  box-shadow: inset 0 0 2px 2px rgba(0, 0, 0, 0.4);
+}
+
+.dpad {
+  width: 100%;
+  justify-content: center;
+  align-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, 56px);
+  grid-template-rows: repeat(3, 56px);
+  gap: 0;
+}
+
+.dpad div {
+  background-color: rgb(128, 128, 128);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32px;
+  font-weight: 800px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border: 2px solid rgb(22, 22, 22);
+}
+
+.dpad div:hover {
+  background-color: rgb(85, 85, 85);
+}
+
+.dpad .arrow {
+  height: 40px;
+  width: 40px;
+}
+
+.dpad .up {
+  grid-column: 2;
+  grid-row: 1;
+  border-bottom: none;
+  box-shadow: 0px -4px 8px 4px rgba(0, 0, 0, 0.4);
+  border-radius: 8px 8px 0 0;
+}
+
+.dpad .left {
+  grid-column: 1;
+  grid-row: 2;
+  border-right: none;
+  box-shadow: -4px 0px 8px 4px rgba(0, 0, 0, 0.4);
+  border-radius: 8px 0 0 8px;
+}
+
+.dpad .center {
+  grid-column: 2;
+  grid-row: 2;
+  background-color: grey;
+  cursor: default;
+  border: none;
+  box-shadow: inset 0px 0px 4px 2px rgba(0, 0, 0, 0.4);
+}
+
+.dpad .right {
+  grid-column: 3;
+  grid-row: 2;
+  border-left: none;
+  box-shadow: 4px 0px 8px 4px rgba(0, 0, 0, 0.4);
+  border-radius: 0 8px 8px 0;
+}
+
+.dpad .down {
+  grid-column: 2;
+  grid-row: 3;
+  border-top: none;
+  box-shadow: 0px 4px 8px 4px rgba(0, 0, 0, 0.4);
+  border-radius: 0 0 8px 8px;
+}
+
+.led {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #333;
+  margin: 16px;
+  display: inline-block;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+  border: 2px solid rgb(40, 40, 40);
+}
+
+.led.blue {
+  --led-color: blue;
+}
+
+.led.green {
+  --led-color: green;
+}
+
+.led.yellow {
+  --led-color: yellow;
+}
+
+@keyframes blink {
+
+  0%,
+  100% {
+    background-color: #333;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  }
+
+  50% {
+    background-color: var(--led-color);
+    box-shadow: 0 0 16px var(--led-color);
+  }
+}
+
+.paused {
+  animation: blink 500ms infinite;
+}
+
+.loadbar {
+  height: 24px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border-bottom: 1px solid rgba(52, 105, 187, 0.1);
+}
+
+.loadProgress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(52, 105, 187, 0.4);
+  transition: all 2.5s ease-in-out;
+}
+
+#loadProgressText {
+  padding-top: 2px;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  font-size: 12px;
+  color: rgb(80, 80, 80);
+}
+
+.smallScreen {
+  position: relative;
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.mainScreen {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+
+#barView {
+  height: 100%;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: hidden;
+  gap: 4px;
+  padding: 4px;
+  transition: all 125ms ease-in-out;
+}
+
+.pokeBar {
+  height: 20%;
+  width: 96%;
+  border-radius: 0 40px 40px 0;
+  display: flex;
+  flex-shrink: 0;
+  padding: 0 8px;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 125ms ease-in-out;
+  font-size: 24px;
+}
+
+.next,
+.last {
+  width: 88%;
+  height: 16%;
+  font-size: 20px;
+}
+
+.next1,
+.last1 {
+  width: 80%;
+  height: 12%;
+  font-size: 16px;
+}
+
+.next2,
+.last2 {
+  width: 72%;
+  height: 8%;
+  font-size: 12px;
+}
+
+.next3,
+.last3 {
+  width: 64%;
+  height: 0%;
+  overflow: hidden;
+}
+
+.barStatus {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.barStatus img {
+  max-height: 100%;
+  max-width: 25%;
+  float: right;
+  flex-shrink: 0;
+}
+
+.pokeBar .pokeName {
+  text-align: left;
+  flex-grow: 1;
+  padding-left: 8px;
+
+}
+
+.barType {
+  height: 100%;
+  width: 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  padding-right: 8px;
+}
+
+.barType img {
+  height: 40%;
+  width: auto;
+}
+
+.iconbar {
+  width: 72px;
+  border-left: 1px solid rgba(52, 105, 187, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.iconbar div {
+  flex: 1;
+  width: 100%;
+  height: 33.3%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.iconbar img {
+  height: 64px;
+  width: 64px;
+}
+
+.iconbar img:hover {
+  background-color: rgba(52, 105, 187, 0.4);
+}
+
+.iconbar input[type=search] {
+  position: absolute;
+  right: 0;
+  width: 64px;
+  height: 64px;
+  outline: unset;
+  border: none;
+  padding-left: 72px;
+  background-color: unset;
+  background: url(/assets/icons/magnifying-glass-solid.svg) no-repeat;
+  background-size: 56px;
+  background-position: 4px 4px;
+  transition: all 125ms ease-in-out;
+  font-size: 24px;
+}
+
+.iconbar input[type=search]:hover {
+  background-color: rgba(52, 105, 187, 0.4);
+}
+
+input[type=search]:focus {
+  width: 100%;
+  border: 2px solid rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  background-color: whitesmoke;
+  background-size: 56px;
+  background-position: 4px 4px;
+  z-index: 2;
+}
+
+.filterContainer {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 2;
+  transform: translate(100%, 0);
+  height: 100% !important;
+  width: 50% !important;
+  background-color: whitesmoke;
+  transition: all 125ms ease-in-out;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+}
