@@ -56,8 +56,10 @@ body {
 header,
 footer {
   display: flex;
+  height: 10%;
+  width: 100%;
   justify-content: center;
-  padding-top: 16px;
+  align-items: flex-end;
   color: #fecc00;
   font-size: 24px;
   font-family: 'PokeSolid';
@@ -68,21 +70,25 @@ footer {
   font-size: 16px;
   text-shadow: none;
   color: rgb(40, 40, 40);
+  height: 5%;
 }
 
 .pokedex {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .topScreen,
 .bottomScreen {
+  position: relative;
   background-color: rgb(226, 24, 24);
-  width: 80vw;
+  width: 90vw;
   max-width: 1440px;
-  height: 39vh;
+  height: 48%;
   border: 8px solid rgb(40, 40, 40);
   border-radius: 32px;
   display: flex;
@@ -92,7 +98,7 @@ footer {
 .divider {
   width: 70vw;
   max-width: 1100px;
-  height: 2vh;
+  height: 2%;
   border-left: 16px solid rgb(40, 40, 40);
   border-right: 16px solid rgb(40, 40, 40);
   border-radius: 32px;
@@ -112,6 +118,17 @@ footer {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+
+#topScreenInfo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  margin: 0;
 }
 
 .topScreen nav,
@@ -327,7 +344,7 @@ footer {
   }
 }
 
-.paused {
+.aniStart {
   animation: blink 500ms infinite;
 }
 
@@ -379,6 +396,60 @@ footer {
   flex: 1;
   width: 100%;
   height: 100%;
+}
+
+#cardView {
+  height: 100%;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  overflow: hidden auto;
+  gap: 8px;
+  padding: 8px;
+}
+
+.pokeCard {
+  padding: 8px;
+  width: 24%;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+
+
+.cardStatus,
+.cardType {
+  gap: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cardStatus {
+  height: 75%;
+}
+
+.cardType {
+  height: 25%;
+  justify-content: center;
+}
+
+.cardStatus p {
+  font-size: 16px;
+}
+
+.cardStatus img,
+.cardType img {
+  max-height: 50%;
+  width: auto;
 }
 
 #barView {
@@ -482,7 +553,7 @@ footer {
   align-items: center;
 }
 
-.iconbar div {
+.iconbar>div {
   flex: 1;
   width: 100%;
   height: 33.3%;
@@ -530,6 +601,10 @@ input[type=search]:focus {
   z-index: 2;
 }
 
+input[type=search]:focus:hover {
+  background-color: whitesmoke;
+}
+
 .filterContainer {
   position: absolute;
   bottom: 0;
@@ -542,4 +617,45 @@ input[type=search]:focus {
   transition: all 125ms ease-in-out;
   border: 1px solid rgba(0, 0, 0, 0.4);
   border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+}
+
+.filterContainer div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+#typeFilters {
+  height: 85%;
+}
+
+.filterButton {
+  height: 15%;
+  width: 100%;
+}
+
+.filterButton button {
+  width: 40%;
+  height: 80%;
+  font-size: 16px;
+  border: 1px solid #333;
+  box-shadow: inset 0 0 2px 2px rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+}
+
+#typeFilters label {
+  width: 33.3%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+#typeFilters img {
+  height: auto;
+  width: auto;
 }

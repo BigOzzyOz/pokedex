@@ -4,8 +4,57 @@ let currentId = 0;
 const types = [];
 const pokemon = [];
 
-function renderPokemonBars(id = currentId) {
-  let currentSet = [pokemon[id - 4], pokemon[id - 3], pokemon[id - 2], pokemon[id - 1], pokemon[id], pokemon[id + 1], pokemon[id + 2], pokemon[id + 3], pokemon[id + 4]];
+function init() {
+  let topScreenInfo = document.getElementById('topScreenInfo');
+  topScreenInfo.innerHTML = htmlStart();
+  getUserResponse().then((response) => {
+    if (response) {
+      topScreenInfo.innerHTML = htmlContinue();
+      getData();
+      let intervalId = setInterval(() => {
+        if (pokemon.length >= 10) {
+          clearInterval(intervalId);
+          renderPokemonBars();
+          document.getElementById('topScreenInfo').classList.add('d-none');
+        }
+      }, 100);
+    } else {
+      topScreenInfo.innerHTML = htmlAbort();
+    }
+  });
+}
+
+function getUserResponse() {
+  return new Promise((resolve) => {
+    window.getUserResponse = resolve;
+  });
+}
+
+function htmlStart() {
+  return /*html*/`
+    <p>Bisher sind noch keine Einträge in deinem Pokedex vorhanden.</p>
+    <p>Möchtest du Professor Eich um Hilfe Fragen und dir das Aktuelle Datenset herunterladen?</p>
+    <div>
+      <button onclick="getUserResponse(true)">JA</button>
+      <button onclick="getUserResponse(false)">NEIN</button>
+    </div>
+  `;
+}
+
+function htmlContinue() {
+  return /*html*/`
+    <p>Daten werder Geladen. Es beginnt sobald genügend Daten vorhanden sind</p>
+  `;
+}
+
+function htmlAbort() {
+  return /*html*/`
+    <p>Schade, viel Spaß auf deiner Reise. Solltest du es dir anders Überlegen Starte das Gerät neu</p>
+  `;
+}
+
+function renderPokemonBars(id = currentId, pokeArray = pokemon) {
+  let currentSet = [pokeArray[id - 4], pokeArray[id - 3], pokeArray[id - 2], pokeArray[id - 1], pokeArray[id], pokeArray[id + 1], pokeArray[id + 2], pokeArray[id + 3], pokeArray[id + 4]];
   let bars = document.getElementById('barView');
   currentId = id;
   bars.innerHTML = '';
@@ -15,6 +64,21 @@ function renderPokemonBars(id = currentId) {
     changeClass(0, i);
   }
   pokemonBg('.pokeBar');
+}
+
+function renderPokemonCards(pokeArray = pokemon) {
+  let cards = document.getElementById('cardView');
+  cards.innerHTML = '';
+  for (let i = 0; i < pokeArray.length; i++) {
+    cards.innerHTML += htmlRenderCards(pokeArray, i);
+  }
+  pokemonBg('.pokeCard');
+}
+
+function renderSingleCard(pokeArray = pokemon, i) {
+  let cards = document.getElementById('cardView');
+  cards.innerHTML += htmlRenderCards(pokeArray, i);
+  pokemonBgSingle(`pokemon${i}`);
 }
 
 function htmlRenderBars(pokeIndex = pokemon[currentId]) {
@@ -39,15 +103,32 @@ function htmlRenderBars(pokeIndex = pokemon[currentId]) {
   }
 }
 
+function htmlRenderCards(pokeArray = pokemon, pokeId = 0) {
+  return /*html*/`
+    <div id="pokemon${pokeId}" class="pokeCard" data-type1=${pokeArray[pokeId].type1} ${pokeArray[pokeId].type2 !== '' ? `data-type2=${pokeArray[pokeId].type2}` : ''}>
+      <div class="cardStatus">
+        <p class="PokeId">${String(pokeArray[pokeId].id).padStart(4, '0')}</p>
+        <img src="${pokeArray[pokeId].imgSmall}" alt="image of ${pokeArray[pokeId].origin}">
+        <p class="pokeName">${pokeArray[pokeId].name}</p>
+      </div>
+      <div class="cardType">
+      <img
+        src="${types[types.findIndex((element) => element.origin === pokeArray[pokeId].type1)].img}" alt="${pokeArray[pokeId].type1}TypeImage">
+        ${pokeArray[pokeId].type2 !== '' ? `<img src="${types[types.findIndex((element) => element.origin === pokeArray[pokeId].type2)].img}" alt="${pokeArray[pokeId].type1}TypeImage">` : ''}
+  </div>
+</div>
+`;
+}
+
 async function renderLoadingbar() {
   let loadBar = document.getElementById('loadProgress');
   let text = document.getElementById('loadProgressText');
-  text.innerHTML = `${pokemon.length} von ${poke.count} Pokemon geladen`;
-  loadBar.style.width = `${Number((pokemon.length / poke.count) * 100).toFixed(1)}%`;
+  text.innerHTML = `${pokemon.length} von ${poke.results.length} Pokemon geladen`;
+  loadBar.style.width = `${Number((pokemon.length / poke.results.length) * 100).toFixed(1)}%`;
 }
 
 async function getTypes(paths) {
-  document.getElementById('ledYellow').classList.add('paused');
+  document.getElementById('ledYellow').classList.add('aniStart');
   try {
     response = await fetch(paths.type);
     type = await response.json();
@@ -59,7 +140,8 @@ async function getTypes(paths) {
   } catch (error) {
     console.error('Fehler beim Abrufen der Daten:', error);
   } finally {
-    document.getElementById('ledYellow').classList.remove('paused');
+    document.getElementById('ledYellow').classList.remove('aniStart');
+    return;
   }
 }
 
@@ -73,7 +155,7 @@ function pushType(typeInfo) {
 }
 
 async function getPokemon(poke) {
-  document.getElementById('ledGreen').classList.add('paused');
+  document.getElementById('ledGreen').classList.add('aniStart');
   const id = setInterval(renderLoadingbar, 2500);
   try {
     for (let i = 0; i < poke.results.length; i++) {
@@ -84,13 +166,15 @@ async function getPokemon(poke) {
       response = await fetch(newMon2.evolution_chain.url);
       let evoChain = await response.json();
       pushPokemon(newMon, newMon2, evoChain);
+      renderSingleCard(pokemon, i);
     }
   } catch (error) {
     console.error('Fehler beim Abrufen der Daten:', error);
   } finally {
     clearInterval(id);
     document.getElementById('loadbar').classList.add('d-none');
-    document.getElementById('ledGreen').classList.remove('paused');
+    document.getElementById('ledGreen').classList.remove('aniStart');
+    return;
   }
 }
 
@@ -103,7 +187,7 @@ function pushPokemon(info, species, chain) {
     'type2': info.types[1]?.type?.name ?? '',
     'height': info.height,
     'weight': info.weight,
-    'imgSmall': info.sprites.other.showdown.front_default,
+    'imgSmall': info.sprites.other.showdown.front_default == null ? info.sprites.front_default : info.sprites.other.showdown.front_default,
     'imgBig': info.sprites.other.home.front_default,
     'stats': {
       'hp': info.stats[0].base_stat,
@@ -119,19 +203,46 @@ function pushPokemon(info, species, chain) {
   });
 }
 
+function searchPokemon() {
+  let searchInput = document.getElementById('search').value;
+  searchInput = searchInput.toLowerCase();
+  let screen = document.getElementById('barView').classList.contains('d-none') ? 'cardView' : 'barView';
+  if (screen == 'barView') {
+    searchBarView(searchInput);
+  } else {
+    searchCardView(searchInput);
+  }
+}
+
+function searchBarView(searchInput) {
+  currentId = pokemon.findIndex((pokemons) =>
+    pokemons.name.toLowerCase().includes(searchInput) || String(pokemons.id).toLowerCase().padStart(4, '0').includes(searchInput)
+  );
+  renderPokemonBars();
+}
+
+function searchCardView(searchInput) {
+  const pokeArray = [];
+  pokemon.forEach(pokemons => {
+    pokemons.name.toLowerCase().includes(searchInput) || String(pokemons.id).toLowerCase().padStart(4, '0').includes(searchInput) ? pokeArray.push(pokemons) : null;
+  });
+  renderPokemonCards(pokeArray);
+}
+
 
 async function getData(path = baseURL) {
-  document.getElementById('ledBlue').classList.add('paused');
+  document.getElementById('ledBlue').classList.add('aniStart');
   try {
     let response = await fetch(path);
     paths = await response.json();
-    response = await fetch(paths.pokemon + '?limit=100000&offset=0');
+    response = await fetch(paths.pokemon + '?limit=1025&offset=0');
     poke = await response.json();
-    getTypes(paths);
-    getPokemon(poke);
-  } catch (error) { console.error('Fehler beim Abrufen der Daten:', error); } finally {
-
-    await poke.count == pokemon.length ? document.getElementById('ledBlue').classList.remove('paused') : null;
+    await getTypes(paths);
+    await getPokemon(poke);
+  } catch (error) {
+    console.error('Fehler beim Abrufen der Daten:', error);
+  } finally {
+    pokemon.length == poke.results.length ? document.getElementById('ledBlue').classList.remove('aniStart') : document.getElementById('ledBlue').classList.remove('aniStart');
   }
 }
 
@@ -149,13 +260,16 @@ function closeMenu(window) {
 
 function changeView(view) {
   let image = document.getElementById(view);
+  let barView = document.getElementById('barView');
+  let cardView = document.getElementById('cardView');
+  barView.classList.toggle('d-none');
+  cardView.classList.toggle('d-none');
   image.src = image.src.indexOf('table') != -1 ? 'assets/icons/bars-solid.svg' : 'assets/icons/table-cells-solid.svg';
 }
 
-
 function move(direction) {
   let poke = document.querySelectorAll('.pokeBar');
-  if ((currentId == 0 && direction == '14.3%') || (currentId == pokemon.length && direction == '-14.3%')) {
+  if ((currentId == 0 && direction == '14.3%') || (currentId == pokemon.length - 1 && direction == '-14.3%')) {
     return;
   } else {
     for (let i = 0; i < poke.length; i++) {
@@ -174,7 +288,7 @@ function pokemonBg(selector) {
     let type1 = pokeBar.dataset.type1 ? pokeBar.dataset.type1.toLowerCase() : null;
     let type2 = pokeBar.dataset.type2 ? pokeBar.dataset.type2.toLowerCase() : null;
     if (type1 && type2) {
-      pokeBar.style.background = `linear-gradient(2deg, var(--${type1}) 60%, var(--${type2}) 75%)`;
+      pokeBar.style.background = `linear-gradient(45deg, var(--${type1}) 60%, var(--${type2}) 75%)`;
     } else if (type1) {
       pokeBar.style.background = `var(--${type1})`;
     } else if (type2) {
@@ -183,127 +297,17 @@ function pokemonBg(selector) {
   });
 }
 
-function render() {
-  let cont = document.getElementById('barView');
-  cont.innerHTML = /*html*/`    
-    <div class="pokeBar last3" data-type1="normal" data-type2="fighting">
-      <div class="barStatus">
-        <p class="PokeId">0001</p>
-        <img
-        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/1.gif"
-        alt="">
-        <p class="pokeName">Name</p>
-      </div>
-      <div class="barType">
-        <img src="assets/icons/1.png" alt="">
-        <img src="assets/icons/2.png" alt="">
-      </div>
-    </div>
-    <div class="pokeBar last2" data-type1="flying" data-type2="poison">
-      <div class="barStatus">
-        <p class="PokeId">0002</p>
-        <img
-        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/2.gif"
-        alt="">
-        <p class="pokeName">Name</p>
-      </div>
-      <div class="barType">
-        <img src="assets/icons/3.png" alt="">
-        <img src="assets/icons/4.png" alt="">
-      </div>
-    </div>
-    <div class="pokeBar last1" data-type1="ground" data-type2="rock">
-      <div class="barStatus">
-        <p class="PokeId">0003</p>
-        <img
-        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/3.gif"
-        alt="">
-        <p class="pokeName">Name</p>
-      </div>
-      <div class="barType">
-        <img src="assets/icons/5.png" alt="">
-        <img src="assets/icons/6.png" alt="">
-      </div>
-    </div>
-    <div class="pokeBar last" data-type1="bug" data-type2="ghost">
-      <div class="barStatus">
-        <p class="PokeId">0004</p>
-        <img
-        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/4.gif"
-        alt="">
-        <p class="pokeName">Name</p>
-      </div>
-      <div class="barType">
-        <img src="assets/icons/7.png" alt="">
-        <img src="assets/icons/8.png" alt="">
-      </div>
-    </div>
-    <div class="pokeBar current" data-type1="steel" data-type2="fire">
-      <div class="barStatus">
-        <p class="PokeId">0005</p>
-        <img
-        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/5.gif"
-        alt="">
-        <p class="pokeName">Name</p>
-      </div>
-      <div class="barType">
-        <img src="assets/icons/9.png" alt="">
-        <img src="assets/icons/10.png" alt="">
-      </div>
-    </div>
-    <div class="pokeBar next" data-type1="water" data-type2="grass">
-      <div class="barStatus">
-        <p class="PokeId">0006</p>
-        <img
-        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/6.gif"
-        alt="">
-        <p class="pokeName">Name</p>
-      </div>
-      <div class="barType">
-        <img src="assets/icons/11.png" alt="">
-        <img src="assets/icons/12.png" alt="">
-      </div>
-    </div>
-    <div class="pokeBar next1" data-type1="electric" data-type2="psychic">
-      <div class="barStatus">
-        <p class="PokeId">0007</p>
-        <img
-        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/7.gif"
-        alt="">
-        <p class="pokeName">Name</p>
-      </div>
-      <div class="barType">
-        <img src="assets/icons/13.png" alt="">
-        <img src="assets/icons/14.png" alt="">
-      </div>
-    </div>
-    <div class="pokeBar next2" data-type1="ice" data-type2="dragon">
-      <div class="barStatus">
-        <p class="PokeId">0008</p>
-        <img
-        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/8.gif"
-        alt="">
-        <p class="pokeName">Name</p>
-      </div>
-      <div class="barType">
-        <img src="assets/icons/15.png" alt="">
-        <img src="assets/icons/16.png" alt="">
-      </div>
-    </div>
-    <div class="pokeBar next3" data-type1="dark" data-type2="fairy">
-      <div class="barStatus">
-        <p class="PokeId">0009</p>
-        <img
-        src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/9.gif"
-        alt="">
-        <p class="pokeName">Name</p>
-      </div>
-      <div class="barType">
-        <img src="assets/icons/17.png" alt="">
-        <img src="assets/icons/18.png" alt="">
-      </div>
-    </div>
-    `;
+function pokemonBgSingle(pokeId) {
+  let pokemons = document.getElementById(pokeId);
+  let type1 = pokemons.dataset.type1 ? pokemons.dataset.type1.toLowerCase() : null;
+  let type2 = pokemons.dataset.type2 ? pokemons.dataset.type2.toLowerCase() : null;
+  if (type1 && type2) {
+    pokemons.style.background = `linear-gradient(45deg, var(--${type1}) 60%, var(--${type2}) 75%)`;
+  } else if (type1) {
+    pokemons.style.background = `var(--${type1})`;
+  } else if (type2) {
+    pokemons.style.background = `var(--${type2})`;
+  };
 }
 
 function changeClass(direction, bar, factor = 0) {
@@ -320,14 +324,14 @@ function changeClass(direction, bar, factor = 0) {
   };
 }
 
-function openPage(id, element, color) {
+function openPage(selector, element, color) {
   let tab = document.getElementsByClassName('topTab');
   let tabLink = document.getElementsByClassName('topTabLink');
   for (let i = 0; i < tabLink.length; i++) {
     tab[i].style.display = 'none';
     tabLink[i].style.backgroundColor = '';
   }
-  document.getElementById(id).style.display = 'block';
+  document.getElementById(selector).style.display = 'block';
   element.style.backgroundColor = color;
 }
 

@@ -10,7 +10,7 @@
   <script src="script/script.js"></script>
 </head>
 
-<body>
+<body onload="init()">
   <div id="limiter">
     <header>
       <h1>Der Pokedex für Pokefans</h1>
@@ -29,6 +29,7 @@
           <div id="misc" class="topTab"></div>
           <div id="stats" class="topTab"></div>
           <div id="evo" class="topTab"></div>
+          <div id="topScreenInfo" class="screen"></div>
         </div>
       </div>
       <div class="divider"></div>
@@ -70,130 +71,12 @@
           </div>
           <div class="smallScreen">
             <div class="mainScreen">
-              <div id="barView">
-                <div class="pokeBar last3" data-type1="normal" data-type2="fighting">
-                  <div class="barStatus">
-                    <p class="PokeId">0001</p>
-                    <img
-                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/1.gif"
-                      alt="">
-                    <p class="pokeName">Name</p>
-                  </div>
-                  <div class="barType">
-                    <img src="assets/icons/1.png" alt="">
-                    <img src="assets/icons/2.png" alt="">
-                  </div>
-                </div>
-                <div class="pokeBar last2" data-type1="flying" data-type2="poison">
-                  <div class="barStatus">
-                    <p class="PokeId">0002</p>
-                    <img
-                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/2.gif"
-                      alt="">
-                    <p class="pokeName">Name</p>
-                  </div>
-                  <div class="barType">
-                    <img src="assets/icons/3.png" alt="">
-                    <img src="assets/icons/4.png" alt="">
-                  </div>
-                </div>
-                <div class="pokeBar last1" data-type1="ground" data-type2="rock">
-                  <div class="barStatus">
-                    <p class="PokeId">0003</p>
-                    <img
-                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/3.gif"
-                      alt="">
-                    <p class="pokeName">Name</p>
-                  </div>
-                  <div class="barType">
-                    <img src="assets/icons/5.png" alt="">
-                    <img src="assets/icons/6.png" alt="">
-                  </div>
-                </div>
-                <div class="pokeBar last" data-type1="bug" data-type2="ghost">
-                  <div class="barStatus">
-                    <p class="PokeId">0004</p>
-                    <img
-                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/4.gif"
-                      alt="">
-                    <p class="pokeName">Name</p>
-                  </div>
-                  <div class="barType">
-                    <img src="assets/icons/7.png" alt="">
-                    <img src="assets/icons/8.png" alt="">
-                  </div>
-                </div>
-                <div class="pokeBar current" data-type1="steel" data-type2="fire">
-                  <div class="barStatus">
-                    <p class="PokeId">0005</p>
-                    <img
-                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/5.gif"
-                      alt="">
-                    <p class="pokeName">Name</p>
-                  </div>
-                  <div class="barType">
-                    <img src="assets/icons/9.png" alt="">
-                    <img src="assets/icons/10.png" alt="">
-                  </div>
-                </div>
-                <div class="pokeBar next" data-type1="water" data-type2="grass">
-                  <div class="barStatus">
-                    <p class="PokeId">0006</p>
-                    <img
-                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/6.gif"
-                      alt="">
-                    <p class="pokeName">Name</p>
-                  </div>
-                  <div class="barType">
-                    <img src="assets/icons/11.png" alt="">
-                    <img src="assets/icons/12.png" alt="">
-                  </div>
-                </div>
-                <div class="pokeBar next1" data-type1="electric" data-type2="psychic">
-                  <div class="barStatus">
-                    <p class="PokeId">0007</p>
-                    <img
-                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/7.gif"
-                      alt="">
-                    <p class="pokeName">Name</p>
-                  </div>
-                  <div class="barType">
-                    <img src="assets/icons/13.png" alt="">
-                    <img src="assets/icons/14.png" alt="">
-                  </div>
-                </div>
-                <div class="pokeBar next2" data-type1="ice" data-type2="dragon">
-                  <div class="barStatus">
-                    <p class="PokeId">0008</p>
-                    <img
-                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/8.gif"
-                      alt="">
-                    <p class="pokeName">Name</p>
-                  </div>
-                  <div class="barType">
-                    <img src="assets/icons/15.png" alt="">
-                    <img src="assets/icons/16.png" alt="">
-                  </div>
-                </div>
-                <div class="pokeBar next3" data-type1="dark" data-type2="fairy">
-                  <div class="barStatus">
-                    <p class="PokeId">0009</p>
-                    <img
-                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/9.gif"
-                      alt="">
-                    <p class="pokeName">Name</p>
-                  </div>
-                  <div class="barType">
-                    <img src="assets/icons/17.png" alt="">
-                    <img src="assets/icons/18.png" alt="">
-                  </div>
-                </div>
-              </div>
+              <div id="barView"></div>
               <div id="cardView" class="d-none"></div>
             </div>
             <div class="iconbar">
               <div>
-                <input type="search" name="search" id="search" placeholder="">
+                <input type="search" name="search" id="search" oninput="searchPokemon()" placeholder="">
               </div>
               <div>
                 <img src="assets/icons/filter-solid.svg" alt="filterIcon" onclick="showMenu('filter')">
@@ -202,8 +85,66 @@
                 <img id="view" src="assets/icons/table-cells-solid.svg" alt="filterIcon" onclick="changeView('view')">
               </div>
               <div id="filter" class="filterContainer d-none">
-                <button>Anwenden</button>
-                <button onclick="closeMenu('filter')">Schließen</button>
+                <div id="typeFilters">
+                  <label><input type="checkbox" value="normal"> <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/1.png"
+                      alt=""></label>
+                  <label><input type="checkbox" value="fighting"> <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/2.png"
+                      alt=""></label>
+                  <label><input type="checkbox" value="flying"> <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/3.png"
+                      alt=""></label>
+                  <label><input type="checkbox" value="poison"> <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/4.png"
+                      alt=""></label>
+                  <label><input type="checkbox" value="ground"> <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/5.png"
+                      alt=""></label>
+                  <label><input type="checkbox" value="rock"> <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/6.png"
+                      alt=""></label>
+                  <label><input type="checkbox" value="bug"> <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/7.png"
+                      alt=""></label>
+                  <label><input type="checkbox" value="ghost"> <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/8.png"
+                      alt=""></label>
+                  <label><input type="checkbox" value="steel"> <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/9.png"
+                      alt=""></label>
+                  <label><input type="checkbox" value="fire"> <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/10.png"
+                      alt=""></label>
+                  <label><input type="checkbox" value="water"> <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/11.png"
+                      alt=""></label>
+                  <label><input type="checkbox" value="grass"> <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/12.png"
+                      alt=""></label>
+                  <label><input type="checkbox" value="electric"> <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/13.png"
+                      alt=""></label>
+                  <label><input type="checkbox" value="psychic"> <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/14.png"
+                      alt=""></label>
+                  <label><input type="checkbox" value="ice"> <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/15.png"
+                      alt=""></label>
+                  <label><input type="checkbox" value="dragon"> <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/16.png"
+                      alt=""></label>
+                  <label><input type="checkbox" value="dark"> <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/17.png"
+                      alt=""></label>
+                  <label><input type="checkbox" value="fairy"> <img
+                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/18.png"
+                      alt=""></label>
+                </div>
+                <div class="filterButton">
+                  <button>Anwenden</button>
+                  <button onclick="closeMenu('filter')">Schließen</button>
+                </div>
               </div>
             </div>
           </div>
