@@ -50,7 +50,7 @@
           <img src="assets/img/previewtext.png" class="logo" alt="pokedexLogo">
           <div class="dpad">
             <div class="up">
-              <img class="arrow" src="assets/icons/caret-up-solid.svg" alt="caretUp" onclick="move('-14.3%')">
+              <img class="arrow" src="assets/icons/caret-up-solid.svg" alt="caretUp" value="-100" onclick="move(-100)">
             </div>
             <div class="left">
               <img class="arrow" src="assets/icons/caret-left-solid.svg" alt="caretLeft">
@@ -60,18 +60,20 @@
               <img src="assets/icons/caret-right-solid.svg" alt="caretRight" class="arrow">
             </div>
             <div class="down">
-              <img src="assets/icons/caret-down-solid.svg" alt="caretDown" class="arrow" onclick="move('14.3%')">
+              <img src="assets/icons/caret-down-solid.svg" alt="caretDown" class="arrow" value="100"
+                onclick="move(100)">
             </div>
           </div>
         </div>
         <div id="pokeDetails" class="screen">
+
           <div id="loadbar" class="loadbar">
             <p id="loadProgressText"></p>
             <div id="loadProgress" class="loadProgress"></div>
           </div>
           <div class="smallScreen">
             <div class="mainScreen">
-              <div id="barView"></div>
+              <div id="barView" onwheel="move(event)"></div>
               <div id="cardView" class="d-none"></div>
             </div>
             <div class="iconbar">
@@ -147,6 +149,9 @@
                 </div>
               </div>
             </div>
+          </div>
+          <div id="smallScreenInfo" class="screen">
+            <img src="assets/img/previewtext.png" alt="">
           </div>
         </div>
       </div>

@@ -1,33 +1,108 @@
 let baseURL = 'https://pokeapi.co/api/v2/';
 let paths, type, poke;
 let currentId = 0;
-const types = [];
-const pokemon = [];
+const types = getLocal('types');
+const pokemon = getLocal('pokemon');
+
+function setlocal(key, array) {
+  localStorage.setItem(key, JSON.stringify(array));
+}
+
+function getLocal(key) {
+  let item = localStorage.getItem(key);
+  if (item) {
+    return JSON.parse(item);
+  } else {
+    return [];
+  }
+}
 
 function init() {
+  let screen = document.querySelectorAll('#topScreenInfo, #smallScreenInfo');
+  if (pokemon.length == 1025 && types.length == 20) {
+    renderPokemonCards();
+    renderPokemonBars();
+    screen.forEach(element => { element.classList.toggle('d-none'); });
+  } else {
+    start();
+  }
+}
+
+async function start() {
   let topScreenInfo = document.getElementById('topScreenInfo');
   topScreenInfo.innerHTML = htmlStart();
-  getUserResponse().then((response) => {
-    if (response) {
-      topScreenInfo.innerHTML = htmlContinue();
-      getData();
-      let intervalId = setInterval(() => {
-        if (pokemon.length >= 10) {
-          clearInterval(intervalId);
-          renderPokemonBars();
-          document.getElementById('topScreenInfo').classList.add('d-none');
-        }
-      }, 100);
-    } else {
-      topScreenInfo.innerHTML = htmlAbort();
-    }
-  });
+  let response = await getUserResponse();
+  if (response) {
+    startDowload();
+  } else {
+    topScreenInfo.innerHTML = htmlAbort();
+  };
+}
+
+async function startDowload() {
+  let screen = document.querySelectorAll('#topScreenInfo, #smallScreenInfo');
+  let topScreenInfo = document.getElementById('topScreenInfo');
+  topScreenInfo.innerHTML = htmlContinue();
+  let waitDownload = getData();
+  let intervalId = setInterval(() => {
+    if (pokemon.length >= 20) {
+      clearInterval(intervalId);
+      renderPokemonBars();
+      screen.forEach(element => { element.classList.toggle('d-none'); });
+    };
+  }, 100);
+  await waitDownload;
+  finishDownload();
+}
+
+async function finishDownload() {
+  let topScreenInfo = document.getElementById('topScreenInfo');
+  topScreenInfo.classList.toggle('d-none');
+  topScreenInfo.innerHTML = htmlSaveQuestion();
+  let response = await getUserResponse();
+  if (response) {
+    setlocal('types', types);
+    setlocal('pokemon', pokemon);
+    topScreenInfo.innerHTML = htmlSaveFinish();
+  } else {
+    topScreenInfo.innerHTML = htmlSaveAbort();
+  };
 }
 
 function getUserResponse() {
   return new Promise((resolve) => {
-    window.getUserResponse = resolve;
+    window.resolveUserResponse = resolve;
   });
+}
+
+function userResponse(response) {
+  if (window.resolveUserResponse) {
+    window.resolveUserResponse(response);
+  }
+}
+
+function htmlSaveQuestion() {
+  return /*html*/`
+    <p>Möchtest du dein Datenset speichern um nächstes mal schneller loszulegen?</p>
+    <div>
+      <button onclick="userResponse(true)">JA</button>
+      <button onclick="userResponse(false)">NEIN</button>
+    </div>
+  `;
+};
+
+function htmlSaveFinish() {
+  return /*html*/`
+    <p>Daten wurden gespeichert viel Spaß auf deiner Reise.</p>
+    <button onclick="document.getElementById('topScreenInfo').classList.toggle('d-none')">Schließen</button>
+  `;
+}
+
+function htmlSaveAbort() {
+  return /*html*/`
+  <p>Daten wurden nicht gespeichert viel Spaß auf deiner Reise.</p>
+  <button onclick="document.getElementById('topScreenInfo').classList.toggle('d-none')">Schließen</button>
+`;
 }
 
 function htmlStart() {
@@ -35,8 +110,8 @@ function htmlStart() {
     <p>Bisher sind noch keine Einträge in deinem Pokedex vorhanden.</p>
     <p>Möchtest du Professor Eich um Hilfe Fragen und dir das Aktuelle Datenset herunterladen?</p>
     <div>
-      <button onclick="getUserResponse(true)">JA</button>
-      <button onclick="getUserResponse(false)">NEIN</button>
+      <button onclick="userResponse(true)">JA</button>
+      <button onclick="userResponse(false)">NEIN</button>
     </div>
   `;
 }
@@ -60,7 +135,7 @@ function renderPokemonBars(id = currentId, pokeArray = pokemon) {
   bars.innerHTML = '';
 
   for (let i = 0; i < currentSet.length; i++) {
-    bars.innerHTML += htmlRenderBars(currentSet[i] == undefined ? 1 : currentSet[i]);
+    bars.innerHTML += htmlRenderBars(currentSet[i] == undefined ? 'hidden' : currentSet[i]);
     changeClass(0, i);
   }
   pokemonBg('.pokeBar');
@@ -82,7 +157,7 @@ function renderSingleCard(pokeArray = pokemon, i) {
 }
 
 function htmlRenderBars(pokeIndex = pokemon[currentId]) {
-  if (pokeIndex == 1) {
+  if (pokeIndex == 'hidden') {
     return /*html*/`
       <div class="pokeBar"></div>
     `;
@@ -136,12 +211,11 @@ async function getTypes(paths) {
       response = await fetch(type.results[i].url);
       typeInfo = await response.json();
       pushType(typeInfo);
-    }
+    };
   } catch (error) {
     console.error('Fehler beim Abrufen der Daten:', error);
   } finally {
     document.getElementById('ledYellow').classList.remove('aniStart');
-    return;
   }
 }
 
@@ -155,26 +229,30 @@ function pushType(typeInfo) {
 }
 
 async function getPokemon(poke) {
-  document.getElementById('ledGreen').classList.add('aniStart');
+  document.getElementById('ledGreen').classList.toggle('aniStart');
   const id = setInterval(renderLoadingbar, 2500);
   try {
-    for (let i = 0; i < poke.results.length; i++) {
-      response = await fetch(poke.results[i].url);
-      let newMon = await response.json();
-      response = await fetch(newMon.species.url);
-      let newMon2 = await response.json();
-      response = await fetch(newMon2.evolution_chain.url);
-      let evoChain = await response.json();
-      pushPokemon(newMon, newMon2, evoChain);
-      renderSingleCard(pokemon, i);
-    }
+    await createPokemon(poke);
   } catch (error) {
     console.error('Fehler beim Abrufen der Daten:', error);
   } finally {
     clearInterval(id);
-    document.getElementById('loadbar').classList.add('d-none');
-    document.getElementById('ledGreen').classList.remove('aniStart');
+    document.getElementById('loadbar').classList.toggle('d-none');
+    document.getElementById('ledGreen').classList.toggle('aniStart');
     return;
+  }
+}
+
+async function createPokemon(poke) {
+  for (let i = 0; i < poke.results.length; i++) {
+    let response = await fetch(poke.results[i].url);
+    let newMon = await response.json();
+    response = await fetch(newMon.species.url);
+    let newMon2 = await response.json();
+    response = await fetch(newMon2.evolution_chain.url);
+    let evoChain = await response.json();
+    pushPokemon(newMon, newMon2, evoChain);
+    renderSingleCard(pokemon, i);
   }
 }
 
@@ -231,7 +309,7 @@ function searchCardView(searchInput) {
 
 
 async function getData(path = baseURL) {
-  document.getElementById('ledBlue').classList.add('aniStart');
+  document.getElementById('ledBlue').classList.toggle('aniStart');
   try {
     let response = await fetch(path);
     paths = await response.json();
@@ -242,7 +320,7 @@ async function getData(path = baseURL) {
   } catch (error) {
     console.error('Fehler beim Abrufen der Daten:', error);
   } finally {
-    pokemon.length == poke.results.length ? document.getElementById('ledBlue').classList.remove('aniStart') : document.getElementById('ledBlue').classList.remove('aniStart');
+    document.getElementById('ledBlue').classList.toggle('aniStart');
   }
 }
 
@@ -267,16 +345,17 @@ function changeView(view) {
   image.src = image.src.indexOf('table') != -1 ? 'assets/icons/bars-solid.svg' : 'assets/icons/table-cells-solid.svg';
 }
 
-function move(direction) {
+function move(event) {
+  let direction = event.deltaY == undefined ? event : event.deltaY;
   let poke = document.querySelectorAll('.pokeBar');
-  if ((currentId == 0 && direction == '14.3%') || (currentId == pokemon.length - 1 && direction == '-14.3%')) {
+  if ((currentId == 0 && direction > 0) || (currentId == pokemon.length - 1 && direction < 0)) {
     return;
   } else {
     for (let i = 0; i < poke.length; i++) {
-      poke[i].style.translate = `0 ${direction}`;
+      poke[i].style.translate = `0 ${direction < 0 ? '-14.3%' : '14.3%'}`;
       changeClass(direction, i);
     }
-    direction == '-14.3%' ? currentId++ : currentId--;
+    direction < 0 ? currentId++ : currentId--;
     setTimeout(renderPokemonBars, 200);
     setTimeout(pokemonBg, 201, '.pokeBar');
   }
@@ -313,7 +392,7 @@ function pokemonBgSingle(pokeId) {
 function changeClass(direction, bar, factor = 0) {
   let currentSet = document.querySelectorAll('.pokeBar');
   const classList = ['last3', 'last2', 'last1', 'last', 'current', 'next', 'next1', 'next2', 'next3'];
-  if (direction === '-14.3%' && bar >= 1) {
+  if (direction < 0 && bar >= 1) {
     currentSet[bar].classList.add(classList[bar - 1]);
     currentSet[bar].classList.remove(classList[bar]);
   } else if (direction === '14.3%' && bar < classList.length - 1) {
