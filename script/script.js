@@ -1,30 +1,32 @@
 let baseURL = 'https://pokeapi.co/api/v2/';
 let paths, type, poke;
 let currentId = 0;
-const types = getLocal('types');
-const pokemon = getLocal('pokemon');
+const types = [];
+const pokemon = [];
 
 function setlocal(key, array) {
   localStorage.setItem(key, JSON.stringify(array));
 }
 
-function getLocal(key) {
+async function getLocal(key) {
   let item = localStorage.getItem(key);
-  if (item) {
-    return JSON.parse(item);
-  } else {
-    return [];
-  }
+  item = await JSON.parse(item);
+  return item;
 }
 
-function init() {
+async function init() {
   let screen = document.querySelectorAll('#topScreenInfo, #smallScreenInfo');
-  if (pokemon.length == 1025 && types.length == 20) {
+  let loadItem;
+  if (localStorage.getItem('pokemon') && localStorage.getItem('types')) {
+    loadItem = await getLocal('types');
+    loadItem.forEach(element => { types.push(element); });
+    loadItem = await getLocal('pokemon');
+    loadItem.forEach(element => { pokemon.push(element); });
     renderPokemonCards();
     renderPokemonBars();
     screen.forEach(element => { element.classList.toggle('d-none'); });
   } else {
-    start();
+    setTimeout(start, 5000);
   }
 }
 
@@ -40,7 +42,7 @@ async function start() {
 }
 
 async function startDowload() {
-  let screen = document.querySelectorAll('#topScreenInfo, #smallScreenInfo');
+  let screen = document.querySelectorAll('#topScreenInfo, #smallScreenInfo, #loadbar');
   let topScreenInfo = document.getElementById('topScreenInfo');
   topScreenInfo.innerHTML = htmlContinue();
   let waitDownload = getData();
@@ -141,18 +143,48 @@ function renderPokemonBars(id = currentId, pokeArray = pokemon) {
   pokemonBg('.pokeBar');
 }
 
-function renderPokemonCards(pokeArray = pokemon) {
+async function renderPokemonCards(pokeArray = pokemon) {
   let cards = document.getElementById('cardView');
+  let pagination = document.getElementById('pagination');
   cards.innerHTML = '';
+  pagination.innerHTML = '';
   for (let i = 0; i < pokeArray.length; i++) {
-    cards.innerHTML += htmlRenderCards(pokeArray, i);
+    let page = Number(Math.floor(i / 100 + 1)).toFixed();
+    document.getElementById(`cardView${page}`) == null ? htmlCreateCardPage(page) : null;
+    document.getElementById(`cardView${page}`).innerHTML += htmlRenderCards(pokeArray, i);
   }
+  cardView.classList.contains('d-none') ? null : document.getElementById('defaultCard').click();
   pokemonBg('.pokeCard');
 }
 
+function htmlCreateCardPage(page) {
+  document.getElementById('pagination').innerHTML += /*html*/`
+    <a onclick="openCard(${page}, this)" ${page == 1 ? `id="defaultCard"` : ''}>${page}</a>
+  `;
+  document.getElementById('cardView').innerHTML += /*html*/`
+    <div id="cardView${page}" class="cardView ${page == 1 ? '' : "d-none"}"></div>
+  `;
+}
+
+function openCard(page, element) {
+  let cards = document.querySelectorAll('.cardView');
+  let currentCard = document.getElementById(`cardView${page}`);
+  let pagination = document.querySelectorAll('.pagination a');
+  cards.forEach(card => {
+    card.classList.remove('d-none');
+    card.classList.add('d-none');
+  });
+  pagination.forEach(num => {
+    num.classList.remove('active');
+  });
+  currentCard.classList.remove('d-none');
+  element.classList.add('active');
+}
+
 function renderSingleCard(pokeArray = pokemon, i) {
-  let cards = document.getElementById('cardView');
-  cards.innerHTML += htmlRenderCards(pokeArray, i);
+  let page = Number(Math.floor(i / 100 + 1)).toFixed();
+  document.getElementById(`cardView${page}`) == null ? htmlCreateCardPage(page) : null;
+  document.getElementById(`cardView${page}`).innerHTML += htmlRenderCards(pokeArray, i);
   pokemonBgSingle(`pokemon${i}`);
 }
 
@@ -187,9 +219,9 @@ function htmlRenderCards(pokeArray = pokemon, pokeId = 0) {
         <p class="pokeName">${pokeArray[pokeId].name}</p>
       </div>
       <div class="cardType">
-      <img
+      <img loading="lazy"
         src="${types[types.findIndex((element) => element.origin === pokeArray[pokeId].type1)].img}" alt="${pokeArray[pokeId].type1}TypeImage">
-        ${pokeArray[pokeId].type2 !== '' ? `<img src="${types[types.findIndex((element) => element.origin === pokeArray[pokeId].type2)].img}" alt="${pokeArray[pokeId].type1}TypeImage">` : ''}
+        ${pokeArray[pokeId].type2 !== '' ? `<img loading="lazy" src="${types[types.findIndex((element) => element.origin === pokeArray[pokeId].type2)].img}" alt="${pokeArray[pokeId].type1}TypeImage">` : ''}
   </div>
 </div>
 `;
@@ -223,6 +255,7 @@ function pushType(typeInfo) {
   types.push({
     'id': typeInfo.id,
     'origin': typeInfo.name,
+    'damage': typeInfo.damage_relations,
     'name': typeInfo.names[typeInfo.names.findLastIndex((element) => element.language.name == 'de')]?.name ?? 'Unbekannt',
     'img': `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/${typeInfo.id}.png`
   });
@@ -340,8 +373,11 @@ function changeView(view) {
   let image = document.getElementById(view);
   let barView = document.getElementById('barView');
   let cardView = document.getElementById('cardView');
+  let pagination = document.getElementById('pagination');
   barView.classList.toggle('d-none');
+  pagination.classList.toggle('d-none');
   cardView.classList.toggle('d-none');
+  cardView.classList.contains('d-none') ? null : document.getElementById('defaultCard').click();
   image.src = image.src.indexOf('table') != -1 ? 'assets/icons/bars-solid.svg' : 'assets/icons/table-cells-solid.svg';
 }
 
@@ -410,11 +446,205 @@ function openPage(selector, element, color) {
     tab[i].style.display = 'none';
     tabLink[i].style.backgroundColor = '';
   }
-  document.getElementById(selector).style.display = 'block';
+  document.getElementById(selector).style.display = 'flex';
   element.style.backgroundColor = color;
 }
 
-function renderTopScreen() {
+function renderTopScreen(pokemonID = currentId) {
+
   document.getElementById('defaultOpen').click();
 }
 
+function htmlrenderMisc(pokemonId) {
+  return /*html*/`
+    <img src="${pokemon[pokemonId].imgBig}" alt="image of ${pokemon[pokemonId].origin}">
+    <div>
+      <table>
+        <tbody>
+          <tr>
+            <td>Name</td>
+            <td>${pokemon[pokemonId].name}</td>
+          </tr>
+          <tr>
+            <td>Größe</td>
+            <td>${Number(pokemon[pokemonId].height / 10).toFixed(1)} Meter</td>
+          </tr>
+          <tr>
+            <td>Gewicht</td>
+            <td>${Number(pokemon[pokemonId].height / 10).toFixed(1)} Kilogramm</td>
+          </tr>
+          <tr>
+            <td>Art</td>
+            <td>${pokemon[pokemonId].genus}</td>
+          </tr>
+          <tr>
+            <td>Info</td>
+            <td>${pokemon[pokemonId].flavorText}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function htmlrenderStats(pokemonId) {
+  return /*html*/`
+    <div>
+      <div>
+        <div class="statContainer">
+          <div class="statBar statHp" width="${Number(pokemon[pokemonId].stats.hp / 255 * 100).toFixed()}%"></div>
+        </div>
+        <div>
+          <p>HP</p>
+          <p>${pokemon[pokemonId].stats.hp}</p>
+        </div>
+      </div>
+      <div>
+        <div class="statContainer">
+          <div class="statBar statAttack" width="${Number(pokemon[pokemonId].stats.attack / 255 * 100).toFixed()}%"></div>
+        </div>
+        <div>
+	        <p>Angriff</p>
+          <p>${pokemon[pokemonId].stats.attack}</p>
+        </div>
+      </div>
+      <div>
+        <div class="statContainer">
+          <div class="statBar statDefense" width="${Number(pokemon[pokemonId].stats.defense / 255 * 100).toFixed()}%"></div>
+        </div>
+        <div>
+	        <p>Verteidigung</p>
+          <p>${pokemon[pokemonId].stats.defense}</p>
+        </div>
+      </div>
+      <div>
+        <div class="statContainer">
+          <div class="statBar statSpAttack" width="${Number(pokemon[pokemonId].stats.spAttack / 255 * 100).toFixed()}%"></div>
+        </div>        
+        <div>
+	        <p>Spezial Angriff</p>
+          <p>${pokemon[pokemonId].stats.spAttack}</p>
+        </div>
+      </div>
+      <div>
+        <div class="statContainer">
+          <div class="statBar statSpDefense" width="${Number(pokemon[pokemonId].stats.spDefense / 255 * 100).toFixed()}%"></div>
+        </div>
+        <div>
+	        <p>Spezial Verteidigung</p>
+          <p>${pokemon[pokemonId].stats.spDefense}</p>
+        </div>
+      </div>
+      <div>
+        <div class="statContainer">
+          <div class="statBar statSpeed" width="${Number(pokemon[pokemonId].stats.speed / 255 * 100).toFixed()}%"></div>
+        </div>
+        <div>
+	        <p>Geschwindigeit</p>
+          <p>${pokemon[pokemonId].stats.speed}</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div>
+        <img src="${types[types.findIndex((element) => element.origin === pokemon[pokemonId].type1)].img}" alt="${pokemon[pokemonId].type1}TypeImage">
+        <h4>Stark Gegen</h4>
+        <ul>
+          <li>Doppelter Schaden gegen</li>
+          <ul>
+            ${renderDamage(pokemonId, 'double_damage_to', 'type1')}
+          </ul>
+          <li>Halber Schaden von</li>
+          <ul>
+            ${renderDamage(pokemonId, 'half_damage_from', 'type1')}
+          </ul>
+          <li>Keinen Schaden von</li>
+          <ul>
+            ${renderDamage(pokemonId, 'no_damage_from', 'type1')}
+          </ul>
+        </ul>
+        <h4>Schwach Gegen</h4>
+        <ul>
+          <li>Doppelter Schaden von</li>
+          <ul>
+            ${renderDamage(pokemonId, 'double_damage_from', 'type1')}
+          </ul>
+          <li>Halber Schaden gegen</li>
+          <ul>
+            ${renderDamage(pokemonId, 'half_damage_to', 'type1')}
+          </ul>
+          <li>Keinen Schaden gegen</li>
+          <ul>
+            ${renderDamage(pokemonId, 'no_damage_to', 'type1')}
+          </ul>
+        </ul>
+      </div>
+      ${pokemon[pokemonId].type2 = '' ? null : /*html*/`
+      <div>
+        <img src="${types[types.findIndex((element) => element.origin === pokemon[pokemonId].type2)].img}" alt="${pokemon[pokemonId].type2}TypeImage">
+        <h4>Stark Gegen</h4>
+        <ul>
+          <li>Doppelter Schaden gegen</li>
+          <ul>
+            ${renderDamage(pokemonId, 'double_damage_to', 'type2')}
+          </ul>
+          <li>Halber Schaden von</li>
+          <ul>
+            ${renderDamage(pokemonId, 'half_damage_from', 'type2')}
+          </ul>
+          <li>Keinen Schaden von</li>
+          <ul>
+            ${renderDamage(pokemonId, 'no_damage_from', 'type2')}
+          </ul>
+        </ul>
+        <h4>Schwach Gegen</h4>
+        <ul>
+          <li>Doppelter Schaden von</li>
+          <ul>
+            ${renderDamage(pokemonId, 'double_damage_from', 'type2')}
+          </ul>
+          <li>Halber Schaden gegen</li>
+          <ul>
+            ${renderDamage(pokemonId, 'half_damage_to', 'type2')}
+          </ul>
+          <li>Keinen Schaden gegen</li>
+          <ul>
+            ${renderDamage(pokemonId, 'no_damage_to', 'type2')}
+          </ul>
+        </ul>
+      </div>
+      ` }
+    </div>
+  `;
+}
+
+function renderDamage(pokemonId, damageMulti, x) {
+  let poke = x === 'type1' ? types.find(element => element.origin === pokemon[pokemonId].type1) : types.find(element => element.origin === pokemon[pokemonId].type2);
+
+  if (!poke) {
+    return htmlDamageEmpty();
+  } else if (poke.damage[damageMulti].length === 0) {
+    return htmlDamageEmpty();
+  } else {
+    return poke.damage[damageMulti].map(damage => {
+      let counterPoke = types.find(element => element.origin === damage.name);
+      return htmlDamageList(counterPoke);
+    }).join('');
+  }
+}
+
+function htmlDamageEmpty() {
+  return /*html*/`
+      <li>Niemanden</li>
+    `;
+}
+
+function htmlDamageList(counterPoke) {
+  return /*html*/`
+        <li><img src="${counterPoke.img}" alt="${counterPoke.origin}TypeImage"></li>
+      `;
+}
+
+function htmlrenderEvo(pokemonId) {
+
+}
