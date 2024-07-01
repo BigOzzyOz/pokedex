@@ -163,7 +163,7 @@ footer {
   display: flex;
   align-items: center;
   width: 100%;
-  height: 15%;
+  height: 12%;
   gap: 2px;
   font-size: 16px;
   font-weight: 600;
@@ -196,7 +196,7 @@ footer {
   align-items: center;
   flex: 1;
   width: 100%;
-  height: 85%;
+  height: 88%;
   border: 1px solid rgb(40, 40, 40);
   border-block-start: none;
   border-radius: 0 0 8px 8px;
@@ -207,8 +207,10 @@ footer {
   height: 100%;
   object-fit: contain;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 8px;
 }
 
 #misc table {
@@ -229,11 +231,25 @@ footer {
 
 #misc tr td:last-of-type {
   width: 80%;
-
 }
 
 #stats {
   background-color: rgba(255, 255, 125, 0.15);
+}
+
+.statsCont {
+  width: 80%;
+  height: 16.6%;
+}
+
+.statsCont div:nth-child(2) {
+  display: flex;
+  justify-content: space-between;
+}
+
+.statsCont p {
+  display: flex;
+  font-size: 20px;
 }
 
 .statContainer {
@@ -245,14 +261,16 @@ footer {
   position: relative;
 }
 
-#statBar {
+.statBar {
   height: 100%;
   width: 0;
   transition: width 0.5s ease-in-out;
   position: absolute;
+  top: 0;
+  left: 0;
 }
 
-#loadingContainer::before {
+.statContainer::before {
   content: '';
   position: absolute;
   top: 0;
@@ -267,27 +285,31 @@ footer {
   z-index: 1;
 }
 
-.stat-hp {
+.statOverview {
+  width: 33.3%;
+}
+
+.statHp {
   background-color: rgba(255, 0, 0, 0.5);
 }
 
-.stat-attack {
+.statAttack {
   background-color: rgba(255, 166, 0, 0.5);
 }
 
-.stat-defense {
+.statDefense {
   background-color: rgba(0, 0, 255, 0.5);
 }
 
-.stat-sp-attack {
+.statSpAttack {
   background-color: rgba(128, 0, 128, 0.5);
 }
 
-.stat-sp-defense {
+.statSpDefense {
   background-color: rgba(0, 128, 0, 0.5);
 }
 
-.stat-speed {
+.statSpeed {
   background-color: rgba(255, 255, 0, 0.5);
 }
 
@@ -297,6 +319,73 @@ footer {
 
 #misc {
   background-color: rgba(255, 125, 255, 0.15);
+}
+
+.damageOverview {
+  flex-direction: row;
+  width: 66.6%;
+  padding: 0 4px 0 0;
+  gap: 4px;
+}
+
+.damageTypes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+}
+
+.damageMulti {
+  height: 45%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  margin: 4px 0;
+}
+
+.damageMulti>ul {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.damageMulti>ul>* {
+  height: 16.6%;
+  display: flex;
+  justify-content: center;
+}
+
+.damageMulti>ul>ul>li {
+  width: auto;
+  margin-right: 8px;
+}
+
+.damageTypes li {
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  justify-content: center;
+  font-weight: 400;
+}
+
+.damageTypes li:hover {
+  background-color: unset;
+}
+
+.damageTypes img {
+  height: 24px;
+  width: auto;
+}
+
+.damageTypes>img {
+  height: 36px;
 }
 
 .bottomScreen .screen {
@@ -819,8 +908,10 @@ input[type=search]:focus:hover {
 }
 
 .loader {
-  max-height: 72%;
-  max-width: 24%;
+  max-height: 100%;
+  width: auto !important;
+  aspect-ratio: 1;
+  object-fit: contain;
   position: relative;
 }
 
