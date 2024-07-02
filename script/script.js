@@ -30,6 +30,7 @@ async function init() {
     renderPokemonCards();
     renderPokemonBars();
     screen.forEach(element => { element.classList.toggle('d-none'); });
+    document.getElementById('defaultTab').click();
   } else {
     setTimeout(start, 5000);
   }
@@ -56,6 +57,7 @@ async function startDowload() {
       clearInterval(intervalId);
       renderPokemonBars();
       screen.forEach(element => { element.classList.toggle('d-none'); });
+      document.getElementById('defaultTab').click();
     };
   }, 100);
   await waitDownload;
@@ -160,7 +162,6 @@ async function renderPokemonCards(pokeArray = pokemon) {
     document.getElementById(`cardView${page}`) == null ? htmlCreateCardPage(page) : null;
     document.getElementById(`cardView${page}`).innerHTML += htmlRenderCards(pokeArray, i);
   }
-  cardView.classList.contains('d-none') ? null : document.getElementById('defaultCard').click();
   pokemonBg('.pokeCard');
 }
 
@@ -195,14 +196,24 @@ function renderSingleCard(pokeArray = pokemon, i) {
   pokemonBgSingle(`pokemon${i}`);
 }
 
+function changePoke(pokeId) {
+  currentId = pokemon.findIndex(element => element.id == pokeId);
+  let screen = document.getElementById('barView').classList.contains('d-none') ? 'cardView' : 'barView';
+  if (screen == 'barView') {
+    renderPokemonBars();
+  } else {
+    renderTopScreen();
+  }
+}
+
 function htmlRenderBars(pokeIndex = pokemon[currentId]) {
   if (pokeIndex == 'hidden') {
     return /*html*/`
-      <div class="pokeBar"></div>
+      <div class="pokeBar noPointer"></div>
     `;
   } else {
     return /*html*/`
-    <div class="pokeBar" data-type1=${pokeIndex.type1} ${pokeIndex.type2 !== '' ? `data-type2=${pokeIndex.type2}` : ''}>
+    <div class="pokeBar" onclick="changePoke(${pokeIndex.id})" data-type1=${pokeIndex.type1} ${pokeIndex.type2 !== '' ? `data-type2=${pokeIndex.type2}` : ''}>
       <div class="barStatus">
         <p class="PokeId">${String(pokeIndex.id).padStart(4, '0')}</p>
         <img src="${pokeIndex.imgSmall}" alt="image of ${pokeIndex.origin}">
@@ -219,7 +230,7 @@ function htmlRenderBars(pokeIndex = pokemon[currentId]) {
 
 function htmlRenderCards(pokeArray = pokemon, pokeId = 0) {
   return /*html*/`
-    <div id="pokemon${pokeId}" class="pokeCard" data-type1=${pokeArray[pokeId].type1} ${pokeArray[pokeId].type2 !== '' ? `data-type2=${pokeArray[pokeId].type2}` : ''}>
+    <div id="pokemon${pokeId}" class="pokeCard" onclick="changePoke(${pokeArray[pokeId].id})" data-type1=${pokeArray[pokeId].type1} ${pokeArray[pokeId].type2 !== '' ? `data-type2=${pokeArray[pokeId].type2}` : ''}>
       <div class="cardStatus">
         <p class="PokeId">${String(pokeArray[pokeId].id).padStart(4, '0')}</p>
         <img src="${pokeArray[pokeId].imgSmall}" alt="image of ${pokeArray[pokeId].origin}">
@@ -335,10 +346,12 @@ function searchPokemon() {
 }
 
 function searchBarView(searchInput) {
-  currentId = pokemon.findIndex((pokemons) =>
+  let searchId = pokemon.findIndex((pokemons) =>
     pokemons.name.toLowerCase().includes(searchInput) || String(pokemons.id).toLowerCase().padStart(4, '0').includes(searchInput)
   );
+  currentId = searchId == -1 ? currentId : searchId;
   renderPokemonBars();
+  renderTopScreen();
 }
 
 function searchCardView(searchInput) {
@@ -346,7 +359,11 @@ function searchCardView(searchInput) {
   pokemon.forEach(pokemons => {
     pokemons.name.toLowerCase().includes(searchInput) || String(pokemons.id).toLowerCase().padStart(4, '0').includes(searchInput) ? pokeArray.push(pokemons) : null;
   });
+  let firstPoke = pokeArray.length == 0 ? pokemon[currentId].name : pokeArray[0].name;
+  searchId = pokemon.findIndex(element => element.name == firstPoke);
+  currentId = searchId == -1 ? currentId : searchId;
   renderPokemonCards(pokeArray);
+  renderTopScreen();
 }
 
 async function getEvolution(paths) {
@@ -540,7 +557,6 @@ function renderTopScreen(pokemonId = currentId) {
   misc.innerHTML = htmlrenderMisc(pokemonId);
   stats.innerHTML = htmlrenderStats(pokemonId);
   renderEvo(pokemonId);
-  document.getElementById('defaultTab').click();
 }
 
 function htmlrenderMisc(pokemonId) {
@@ -724,7 +740,7 @@ function renderEvo(pokemonId = currentId) {
   evoContainer.innerHTML += htmlRenderEvo('base');
   base = document.getElementById('base');
   renderBasePoke(evoChainId, 'base', base);
-  if (evolutionChain[evoChainId].firstEvolution != undefined) {
+  if (evolutionChain[evoChainId].firstEvolution != undefined && evolutionChain[evoChainId].firstEvolution.length != 0) {
     evoContainer.innerHTML += htmlRenderEvo('firstEvolution');
     firstEvo = document.getElementById('firstEvolution');
     renderEvolutionPoke(evoChainId, 'firstEvolution', firstEvo);
@@ -734,6 +750,12 @@ function renderEvo(pokemonId = currentId) {
     renderEvolutionPoke(evoChainId, 'secondEvolution', secondEvo);
   }
 }
+
+// function renderEvoContainer(step,) {
+//   evoContainer.innerHTML += htmlRenderEvo('base');
+//    = document.getElementById('base');
+//   renderBasePoke(evoChainId, 'base', base);
+// }
 
 function renderBasePoke(evoChainId, step, container) {
   let pokeName = evolutionChain[evoChainId].basePoke;

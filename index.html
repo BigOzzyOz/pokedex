@@ -27,49 +27,7 @@
             </ul>
           </nav>
           <div id="misc" class="topTab"></div>
-          <div id="stats" class="topTab">
-            <div class="">
-              <div>
-                <div></div>
-                <div></div>
-                <p></p>
-              </div>
-              <div>
-                <div></div>
-                <div></div>
-                <p></p>
-              </div>
-              <div>
-                <div></div>
-                <div></div>
-                <p></p>
-              </div>
-              <div>
-                <div></div>
-                <div></div>
-                <p></p>
-              </div>
-              <div>
-                <div></div>
-                <div></div>
-                <p></p>
-              </div>
-            </div>
-            <div>
-              <div>
-                <img src="" alt="">
-                <ul></ul>
-                <ul></ul>
-                <ul></ul>
-              </div>
-              <div>
-                <img src="" alt="">
-                <ul></ul>
-                <ul></ul>
-                <ul></ul>
-              </div>
-            </div>
-          </div>
+          <div id="stats" class="topTab"></div>
           <div id="evo" class="topTab"></div>
           <div id="topScreenInfo" class="screen">
             <div class="loader"></div>
@@ -122,7 +80,8 @@
             </div>
             <div class="iconbar">
               <div>
-                <input type="search" name="search" id="search" oninput="searchPokemon()" placeholder="">
+                <input type="search" name="search" id="search" value="" onfocus="this.value=''"
+                  oninput="searchPokemon()" placeholder="Suche nach Name oder Nummer">
               </div>
               <div>
                 <img src="assets/icons/filter-solid.svg" alt="filterIcon" onclick="showMenu('filter')">
@@ -193,7 +152,6 @@
                 </div>
               </div>
             </div>
-
           </div>
           <div id="smallScreenInfo" class="screen">
             <img src="assets/img/previewtext.png" alt="">
