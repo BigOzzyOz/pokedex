@@ -139,6 +139,16 @@ footer {
   font-size: 24px;
 }
 
+.loaderContainer {
+  gap: 16px;
+  align-items: flex-start !important;
+  justify-content: center !important;
+}
+
+.loaderContainer>.loader {
+  height: 60%;
+}
+
 #topScreenInfo>* {
   flex: 1;
   width: 100%;
@@ -945,7 +955,7 @@ input[type=search]:focus:hover {
 }
 
 .loader {
-  max-height: 100%;
+  max-height: 60%;
   width: auto !important;
   aspect-ratio: 1;
   object-fit: contain;
