@@ -146,6 +146,7 @@ function renderPokemonBars(id = currentId, pokeArray = pokemon) {
     bars.innerHTML += htmlRenderBars(currentSet[i] == undefined ? 'hidden' : currentSet[i]);
     changeClass(0, i);
   }
+  renderTopScreen();
   pokemonBg('.pokeBar');
 }
 
@@ -533,9 +534,13 @@ function openPage(selector, element, color) {
   element.style.backgroundColor = color;
 }
 
-function renderTopScreen(pokemonID = currentId) {
-
-  document.getElementById('defaultOpen').click();
+function renderTopScreen(pokemonId = currentId) {
+  let misc = document.getElementById('misc');
+  let stats = document.getElementById('stats');
+  misc.innerHTML = htmlrenderMisc(pokemonId);
+  stats.innerHTML = htmlrenderStats(pokemonId);
+  renderEvo(pokemonId);
+  document.getElementById('defaultTab').click();
 }
 
 function htmlrenderMisc(pokemonId) {
@@ -634,33 +639,21 @@ function htmlrenderStats(pokemonId) {
         <div class="damageMulti">
           <ul>
             <li>Doppelter Schaden gegen</li>
-            <ul>
-              ${renderDamage(pokemonId, 'double_damage_to', 'type1')}
-            </ul>
+            ${renderDamage(pokemonId, 'double_damage_to', 'type1')}
             <li>Halber Schaden von</li>
-            <ul>
-              ${renderDamage(pokemonId, 'half_damage_from', 'type1')}
-            </ul>
+            ${renderDamage(pokemonId, 'half_damage_from', 'type1')}
             <li>Keinen Schaden von</li>
-            <ul>
-              ${renderDamage(pokemonId, 'no_damage_from', 'type1')}
-            </ul>
+            ${renderDamage(pokemonId, 'no_damage_from', 'type1')}
           </ul>
         </div>
         <div class="damageMulti">
           <ul>
             <li>Doppelter Schaden von</li>
-            <ul>
-              ${renderDamage(pokemonId, 'double_damage_from', 'type1')}
-            </ul>
+            ${renderDamage(pokemonId, 'double_damage_from', 'type1')}
             <li>Halber Schaden gegen</li>
-            <ul>
-              ${renderDamage(pokemonId, 'half_damage_to', 'type1')}
-            </ul>
+            ${renderDamage(pokemonId, 'half_damage_to', 'type1')}
             <li>Keinen Schaden gegen</li>
-            <ul>
-              ${renderDamage(pokemonId, 'no_damage_to', 'type1')}
-            </ul>
+            ${renderDamage(pokemonId, 'no_damage_to', 'type1')}
           </ul>
         </div>
       </div>
@@ -670,33 +663,21 @@ function htmlrenderStats(pokemonId) {
         <div class="damageMulti">
           <ul>
             <li>Doppelter Schaden gegen</li>
-            <ul>
-              ${renderDamage(pokemonId, 'double_damage_to', 'type2')}
-            </ul>
+            ${renderDamage(pokemonId, 'double_damage_to', 'type2')}
             <li>Halber Schaden von</li>
-            <ul>
-              ${renderDamage(pokemonId, 'half_damage_from', 'type2')}
-            </ul>
+            ${renderDamage(pokemonId, 'half_damage_from', 'type2')}
             <li>Keinen Schaden von</li>
-            <ul>
-              ${renderDamage(pokemonId, 'no_damage_from', 'type2')}
-            </ul>
+            ${renderDamage(pokemonId, 'no_damage_from', 'type2')}
           </ul>
         </div>
         <div class="damageMulti">
           <ul>
             <li>Doppelter Schaden von</li>
-            <ul>
-              ${renderDamage(pokemonId, 'double_damage_from', 'type2')}
-            </ul>
+            ${renderDamage(pokemonId, 'double_damage_from', 'type2')}
             <li>Halber Schaden gegen</li>
-            <ul>
-              ${renderDamage(pokemonId, 'half_damage_to', 'type2')}
-            </ul>
+            ${renderDamage(pokemonId, 'half_damage_to', 'type2')}
             <li>Keinen Schaden gegen</li>
-            <ul>
-              ${renderDamage(pokemonId, 'no_damage_to', 'type2')}
-            </ul>
+            ${renderDamage(pokemonId, 'no_damage_to', 'type2')}
           </ul>
         </div>
       </div>
@@ -705,25 +686,27 @@ function htmlrenderStats(pokemonId) {
   `;
 }
 
-function renderDamage(pokemonId, damageMulti, x) {
+function renderDamage(pokemonId = currentId, damageMulti, x) {
   let poke = x == 'type1' ? types[types.findIndex((element) => element.origin === pokemon[pokemonId].type1)] : types[types.findIndex((element) => element.origin === pokemon[pokemonId].type2)];
   let countertype = [];
   if (poke == undefined) {
     return;
   } else if (poke.damage[damageMulti].length == 0) {
-    return htmlDamageEmpty();
+    return '';
   } else {
+    countertype.push(htmlDamageEmpty('start'));
     for (let i = 0; i < poke.damage[damageMulti].length; i++) {
       let counterPoke = types[types.findIndex((element) => element.origin === poke.damage[damageMulti][i].name)];
       countertype.push(htmlDamageList(counterPoke));
     }
+    countertype.push(htmlDamageEmpty('end'));
     return countertype.join('');
   }
 }
 
-function htmlDamageEmpty() {
+function htmlDamageEmpty(x) {
   return /*html*/`
-      <li>Niemanden</li>
+      ${x == 'start' ? '<ul>' : '</ul>'}
     `;
 }
 
@@ -733,6 +716,56 @@ function htmlDamageList(counterPoke) {
       `;
 }
 
-function htmlrenderEvo(pokemonId) {
+function renderEvo(pokemonId = currentId) {
+  let evoChainId = evolutionChain.findIndex(ele => pokemon[pokemonId].evolution == ele.id);
+  let evoContainer = document.getElementById('evo');
+  let base, firstEvo, secondEvo;
+  evoContainer.innerHTML = '';
+  evoContainer.innerHTML += htmlRenderEvo('base');
+  base = document.getElementById('base');
+  renderBasePoke(evoChainId, 'base', base);
+  if (evolutionChain[evoChainId].firstEvolution != undefined) {
+    evoContainer.innerHTML += htmlRenderEvo('firstEvolution');
+    firstEvo = document.getElementById('firstEvolution');
+    renderEvolutionPoke(evoChainId, 'firstEvolution', firstEvo);
+  } if (evolutionChain[evoChainId].secondEvolution != undefined) {
+    evoContainer.innerHTML += htmlRenderEvo('secondEvolution');
+    secondEvo = document.getElementById('secondEvolution');
+    renderEvolutionPoke(evoChainId, 'secondEvolution', secondEvo);
+  }
+}
 
+function renderBasePoke(evoChainId, step, container) {
+  let pokeName = evolutionChain[evoChainId].basePoke;
+  let pokeIndex = pokemon[pokemon.findIndex(element => element.origin == pokeName)];
+  container.innerHTML += htmlRenderEvoPoke(pokeIndex, step);
+}
+
+function renderEvolutionPoke(evoChainId, step, container) {
+  for (let i = 0; i < evolutionChain[evoChainId][step].length; i++) {
+    let pokeName = evolutionChain[evoChainId][step][i].name;
+    let pokeIndex = pokemon[pokemon.findIndex(element => element.origin == pokeName)];
+    container.innerHTML += htmlRenderEvoPoke(pokeIndex, step, i);
+  }
+}
+
+function htmlRenderEvo(step) {
+  return /*html*/`
+    <div id="${step}" class="evoStepContainer"></div>
+  `;
+}
+
+function htmlRenderEvoPoke(pokeIndex, step, index = 0) {
+  return /*html*/`
+    <div id="${step + index}" class="evoStepPokemon">
+      <img src="${pokeIndex.imgBig}" alt="imageOf${pokeIndex.origin}">
+      <p>${pokeIndex.name}</p>
+      <p>${String(pokeIndex.id).padStart(4, '0')}</p>
+      ${(step != 'firstEvolution') && (step != 'secondEvolution') ?
+      '' :
+      (evolutionChain[evolutionChain.findIndex(ele => pokeIndex.evolution == ele.id)][step][index].trigger == 'level-up') && (evolutionChain[evolutionChain.findIndex(ele => pokeIndex.evolution == ele.id)][step][index].level != null) ?
+        /*html*/`<p>ab Level ${evolutionChain[evolutionChain.findIndex(ele => pokeIndex.evolution == ele.id)][step][index].level}</p>` :
+        ''}
+    </div>
+  `;
 }
