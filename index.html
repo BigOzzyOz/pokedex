@@ -5,8 +5,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pokedex</title>
+  <link rel="shortcut icon" href="assets/favicon/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="assets/fonts/fonts.css">
   <link rel="stylesheet" href="style/style.css">
+  <script src="script/htmlTemplates.js"></script>
+  <script src="script/objectTemplates.js"></script>
+  <script src="script/dataProcessing.js"></script>
   <script src="script/script.js"></script>
 </head>
 
@@ -55,11 +59,11 @@
               <img class="arrow" src="assets/icons/caret-up-solid.svg" alt="caretUp" value="-100" onclick="move(-100)">
             </div>
             <div class="left">
-              <img class="arrow" src="assets/icons/caret-left-solid.svg" alt="caretLeft">
+              <img class="arrow" src="assets/icons/caret-left-solid.svg" alt="caretLeft" onclick="changeTab(-100)">
             </div>
             <div class="center"></div>
             <div class="right">
-              <img src="assets/icons/caret-right-solid.svg" alt="caretRight" class="arrow">
+              <img src="assets/icons/caret-right-solid.svg" alt="caretRight" class="arrow" onclick="changeTab(100)">
             </div>
             <div class="down">
               <img src="assets/icons/caret-down-solid.svg" alt="caretDown" class="arrow" value="100"
@@ -147,7 +151,8 @@
                       alt=""></label>
                 </div>
                 <div class="filterButton">
-                  <button>Anwenden</button>
+                  <button onclick="filterTypes()">Anwenden</button>
+                  <button onclick="resetFilter()">Reset</button>
                   <button onclick="closeMenu('filter')">Schließen</button>
                 </div>
               </div>
