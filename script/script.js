@@ -1,6 +1,7 @@
 let baseURL = 'https://pokeapi.co/api/v2/';
 let paths, type, poke, evolution;
 let currentId = 0;
+let filteredId = 0;
 const emptyPoke = {
   'id': 0,
   'origin': 'stillLoading',
@@ -69,8 +70,8 @@ function userResponse(response) {
     window.resolveUserResponse(response);
   }
 }
-//TODO - filter Bar Scroll
-function renderPokemonBars(id = filteredPokemon.length == 0 ? currentId : filteredPokemon.findIndex(element => element.name == pokemon[currentId].name), pokeArray = filteredPokemon.length == 0 ? pokemon : filteredPokemon) {
+
+function renderPokemonBars(id = filteredPokemon.length == 0 ? currentId : filteredId, pokeArray = filteredPokemon.length == 0 ? pokemon : filteredPokemon) {
   let currentSet = [pokeArray[id - 4], pokeArray[id - 3], pokeArray[id - 2], pokeArray[id - 1], pokeArray[id], pokeArray[id + 1], pokeArray[id + 2], pokeArray[id + 3], pokeArray[id + 4]];
   let bars = document.getElementById('barView');
   bars.innerHTML = '';
@@ -121,6 +122,7 @@ function renderSingleCard(pokeArray = pokemon, i) {
 
 function changePoke(pokeId) {
   currentId = pokemon.findIndex(element => element.id == pokeId);
+  updateFilteredId();
   let screen = document.getElementById('barView').classList.contains('d-none') ? 'cardView' : 'barView';
   if (screen == 'barView') {
     renderPokemonBars();
@@ -152,6 +154,7 @@ function searchBarView(searchInput) {
     pokemons.name.toLowerCase().includes(searchInput) || String(pokemons.id).toLowerCase().padStart(4, '0').includes(searchInput)
   );
   currentId = searchId == -1 ? currentId : searchId;
+  updateFilteredId();
   renderPokemonBars();
   renderTopScreen();
 }
@@ -164,6 +167,7 @@ function searchCardView(searchInput) {
   let firstPoke = pokeArray.length == 0 ? pokemon[currentId].name : pokeArray[0].name;
   searchId = pokemon.findIndex(element => element.name == firstPoke);
   currentId = searchId == -1 ? currentId : searchId;
+  updateFilteredId();
   renderPokemonCards(pokeArray);
   renderTopScreen();
 }
@@ -192,10 +196,10 @@ function changeView(view) {
   image.src = image.src.indexOf('table') != -1 ? 'assets/icons/bars-solid.svg' : 'assets/icons/table-cells-solid.svg';
 }
 
-function move(event) {
+function move(event, pokeArray = filteredPokemon.length == 0 ? pokemon : filteredPokemon, id = filteredPokemon.length == 0 ? currentId : filteredId) {
   let direction = event.deltaY == undefined ? event : event.deltaY;
   let poke = document.querySelectorAll('.pokeBar');
-  if ((currentId == 0 && direction < 0) || (currentId == pokemon.length - 1 && direction > 0)) {
+  if ((id == 0 && direction < 0) || (id == pokeArray.length - 1 && direction > 0)) {
     return;
   } else {
     for (let i = 0; i < poke.length; i++) {
@@ -203,6 +207,7 @@ function move(event) {
       changeClass(direction, i);
     }
     direction > 0 ? currentId++ : currentId--;
+    updateFilteredId();
     setTimeout(renderPokemonBars, 200);
     setTimeout(pokemonBg, 201, '.pokeBar');
   }
@@ -242,7 +247,7 @@ function changeClass(direction, bar, factor = 0) {
   if (direction > 0 && bar >= 1) {
     currentSet[bar].classList.add(classList[bar - 1]);
     currentSet[bar].classList.remove(classList[bar]);
-  } else if (direction === '14.3%' && bar < classList.length - 1) {
+  } else if (direction < 0 && bar < classList.length - 1) {
     currentSet[bar].classList.add(classList[bar + 1]);
     currentSet[bar].classList.remove(classList[bar]);
   } else {
@@ -365,7 +370,27 @@ function resetFilter() {
     element.checked = false;
   });
   filteredPokemon.splice(0, filteredPokemon.length);
+  filteredId = 0;
+  currentId = 0;
   renderPokemonCards();
   renderPokemonBars();
   closeMenu('filter');
+}
+
+function updateFilteredId() {
+
+  if (filteredPokemon.length == 0) {
+    return;
+  } else {
+    let filter;
+    if (pokemon[currentId].id > filteredPokemon[filteredId].id) {
+      filter = filteredPokemon.findIndex(element => element.id >= pokemon[currentId].id);
+    } else if (pokemon[currentId].id < filteredPokemon[filteredId].id) {
+      filter = filteredPokemon.findLastIndex(element => element.id <= pokemon[currentId].id);
+    } else {
+      filter = filteredId;
+    }
+    filteredId = filter == - 1 ? filteredId : filter;
+    currentId = pokemon.findIndex(element => element.id === filteredPokemon[filteredId].id);
+  }
 }
