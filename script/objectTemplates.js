@@ -45,7 +45,7 @@ function secondEvo(evo, firstIndex) {
 function pushPokemon(info, species, chain) {
   pokemon.push({
     'id': info.id,
-    'origin': info.name,
+    'origin': info.species.name,
     'name': species.names[species.names.findLastIndex((element) => element.language.name == 'de')].name,
     'type1': info.types[0].type.name,
     'type2': info.types[1]?.type?.name ?? '',

@@ -1,13 +1,35 @@
 let baseURL = 'https://pokeapi.co/api/v2/';
 let paths, type, poke, evolution;
 let currentId = 0;
+const emptyPoke = {
+  'id': 0,
+  'origin': 'stillLoading',
+  'name': 'komm später',
+  'type1': 'normal',
+  'type2': 'ghost',
+  'height': 0,
+  'weight': 0,
+  'imgSmall': "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/10258.png",
+  'imgBig': "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/10258.png",
+  'stats': {
+    'hp': 0,
+    'attack': 0,
+    'defense': 0,
+    'spAttack': 0,
+    'spDefense': 0,
+    'speed': 0,
+  },
+  'flavorText': 'Hier Wird noch geladen',
+  'genus': 'Placeholder',
+  'evolution': 0,
+};
 const types = [];
 const evolutionChain = [];
 const pokemon = [];
+const filteredPokemon = [];
 
 async function init() {
   let screen = document.querySelectorAll('#topScreenInfo, #smallScreenInfo');
-  let loadItem;
   if (localStorage.getItem('pokemon') && localStorage.getItem('types') && localStorage.getItem('evolutionChain')) {
     await getAndPushStorage('types', types);
     await getAndPushStorage('evolutionChain', evolutionChain);
@@ -47,11 +69,10 @@ function userResponse(response) {
     window.resolveUserResponse(response);
   }
 }
-
-function renderPokemonBars(id = currentId, pokeArray = pokemon) {
+//TODO - filter Bar Scroll
+function renderPokemonBars(id = filteredPokemon.length == 0 ? currentId : filteredPokemon.findIndex(element => element.name == pokemon[currentId].name), pokeArray = filteredPokemon.length == 0 ? pokemon : filteredPokemon) {
   let currentSet = [pokeArray[id - 4], pokeArray[id - 3], pokeArray[id - 2], pokeArray[id - 1], pokeArray[id], pokeArray[id + 1], pokeArray[id + 2], pokeArray[id + 3], pokeArray[id + 4]];
   let bars = document.getElementById('barView');
-  currentId = id;
   bars.innerHTML = '';
 
   for (let i = 0; i < currentSet.length; i++) {
@@ -62,7 +83,7 @@ function renderPokemonBars(id = currentId, pokeArray = pokemon) {
   pokemonBg('.pokeBar');
 }
 
-async function renderPokemonCards(pokeArray = pokemon) {
+async function renderPokemonCards(pokeArray = filteredPokemon.length == 0 ? pokemon : filteredPokemon) {
   let cards = document.getElementById('cardView');
   let pagination = document.getElementById('pagination');
   cards.innerHTML = '';
@@ -72,6 +93,7 @@ async function renderPokemonCards(pokeArray = pokemon) {
     document.getElementById(`cardView${page}`) == null ? htmlCreateCardPage(page) : null;
     document.getElementById(`cardView${page}`).innerHTML += htmlRenderCards(pokeArray, i);
   }
+  renderTopScreen();
   pokemonBg('.pokeCard');
 }
 
@@ -308,4 +330,42 @@ function changeTab(x) {
     newIndex = (currentIndex === container.length - 1) ? 0 : currentIndex + 1;
   }
   link[newIndex].click();
+}
+
+function filterTypes() {
+  let filterTypes = [];
+  let filter = document.querySelectorAll('#typeFilters input[type=checkbox]:checked');
+  filteredPokemon.splice(0, filteredPokemon.length);
+  if (filter.length == 0 || filter.length == 18) {
+    resetFilter();
+  } else {
+    filter.forEach(type => { filterTypes.push(type.value); });
+    filterPokemon(filterTypes);
+  }
+}
+
+function filterPokemon(types) {
+  for (let i = 0; i < pokemon.length; i++) {
+    const poke = pokemon[i];
+    types.forEach(type => {
+      poke.type1 == type || poke.type2 == type ? filteredPokemon.push(poke) : null;
+    });
+  }
+  let firstPoke = filteredPokemon.length == 0 ? pokemon[currentId].name : filteredPokemon[0].name;
+  searchId = pokemon.findIndex(element => element.name == firstPoke);
+  currentId = searchId == -1 ? currentId : searchId;
+  renderPokemonCards();
+  renderPokemonBars();
+  closeMenu('filter');
+}
+
+function resetFilter() {
+  let filter = document.querySelectorAll('#typeFilters input[type=checkbox]:checked');
+  filter.forEach(element => {
+    element.checked = false;
+  });
+  filteredPokemon.splice(0, filteredPokemon.length);
+  renderPokemonCards();
+  renderPokemonBars();
+  closeMenu('filter');
 }

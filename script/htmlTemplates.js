@@ -1,4 +1,4 @@
-function htmlRenderEvoPoke(pokeIndex, step, index = 0) {
+function htmlRenderEvoPoke(pokeIndex = emptyPoke, step, index = 0) {
   return /*html*/`
     <div id="${step + index}" class="evoStepPokemon">
       <img src="${pokeIndex.imgBig}" alt="imageOf${pokeIndex.origin}">
