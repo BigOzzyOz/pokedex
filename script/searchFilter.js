@@ -67,10 +67,10 @@ function searchPokemon() {
   let searchInput = document.getElementById('search').value;
   searchInput = searchInput.toLowerCase();
   let screen = document.getElementById('barView').classList.contains('d-none') ? 'cardView' : 'barView';
-  if (screen == 'barView') {
-    searchBarView(searchInput);
-  } else {
-    searchCardView(searchInput);
+  if (searchInput.length > 3) {
+    screen == 'barView' ? searchBarView(searchInput) : searchCardView(searchInput);
+  } else if (screen == 'cardView' && searchInput.length == 0) {
+    renderPokemonCards();
   }
 }
 
