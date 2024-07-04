@@ -129,15 +129,15 @@ function move(event, pokeArray = filteredPokemon.length == 0 ? pokemon : filtere
   if ((id == 0 && direction < 0) || (id == pokeArray.length - 1 && direction > 0)) {
     return;
   } else {
-    event.preventDefault();
+    event.deltaY == undefined ? '' : event.preventDefault();
     for (let i = 0; i < poke.length; i++) {
       poke[i].style.translate = `0 ${direction > 0 ? '-14.3%' : '14.3%'}`;
       changeClass(direction, i);
     }
     direction > 0 ? currentId++ : currentId--;
     updateFilteredId();
-    setTimeout(renderPokemonBars, 200);
-    setTimeout(pokemonBg, 201, '.pokeBar');
+    setTimeout(renderPokemonBars, 150);
+    setTimeout(pokemonBg, 151, '.pokeBar');
   }
 }
 

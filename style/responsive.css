@@ -110,7 +110,6 @@
     width: 40px;
     padding-left: 48px;
     background-size: 32px;
-    right: 10%;
   }
 
   input[type="search"]:focus {
@@ -215,6 +214,10 @@
     flex-direction: row-reverse;
     height: 48px;
     width: 100%;
+  }
+
+  .iconbar input[type="search"] {
+    right: 10%;
   }
 
   .mainScreen {
