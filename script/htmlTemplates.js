@@ -21,7 +21,7 @@ function htmlRenderEvo(step) {
 
 function htmlDamageList(counterPoke) {
   return /*html*/`
-        <li><img src="${counterPoke.img}" alt="${counterPoke.origin}TypeImage"></li>
+        <li class="dmgImg ${counterPoke.origin}"></li>
       `;
 }
 
