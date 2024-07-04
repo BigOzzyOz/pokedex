@@ -317,6 +317,12 @@
   cursor: unset;
 }
 
+.noPointer:hover {
+  transform: scale(1);
+  opacity: 1;
+  box-shadow: none;
+}
+
 .next,
 .last {
   width: 88%;
@@ -418,7 +424,7 @@
   border: none;
   padding-left: 72px;
   background-color: unset;
-  background: url(/assets/icons/magnifying-glass-solid.svg) no-repeat;
+  background: url('../assets/icons/magnifying-glass-solid.svg') no-repeat;
   background-size: 56px;
   background-position: 4px 4px;
   transition: all 125ms ease-in-out;
