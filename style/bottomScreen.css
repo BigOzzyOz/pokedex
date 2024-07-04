@@ -1,0 +1,525 @@
+.bottomScreen .screen {
+  margin-left: 16px;
+  width: 75%;
+}
+
+.controller {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin: 16px;
+}
+
+.lights {
+  position: relative;
+  height: auto;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.logo {
+  height: 80px;
+  margin: 16px;
+}
+
+.ledLight {
+  display: flex;
+  flex-direction: column;
+}
+
+.stripes {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 16%;
+  height: 56%;
+  display: flex;
+  justify-content: space-evenly;
+  gap: 8px;
+  transform: rotate(45deg);
+}
+
+.hole {
+  width: 8px;
+  height: 72px;
+  background-color: rgb(225, 25, 25);
+  border: 1px solid rgb(40, 40, 40);
+  border-radius: 4px;
+  box-shadow: inset 0 0 2px 2px rgba(0, 0, 0, 0.4);
+}
+
+.dpad {
+  width: 100%;
+  justify-content: center;
+  align-content: center;
+  display: grid;
+  grid-template-columns: repeat(3, 56px);
+  grid-template-rows: repeat(3, 56px);
+  gap: 0;
+}
+
+.dpad div {
+  background-color: rgb(128, 128, 128);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32px;
+  font-weight: 800px;
+  cursor: pointer;
+  transition: background-color 125ms ease-in-out;
+  border: 2px solid rgb(22, 22, 22);
+}
+
+.dpad div:hover {
+  background-color: rgb(85, 85, 85);
+}
+
+.dpad .arrow {
+  height: 40px;
+  width: 40px;
+}
+
+.dpad .up {
+  grid-column: 2;
+  grid-row: 1;
+  border-bottom: none;
+  box-shadow: 0px -4px 8px 4px rgba(0, 0, 0, 0.4);
+  border-radius: 8px 8px 0 0;
+}
+
+.dpad .left {
+  grid-column: 1;
+  grid-row: 2;
+  border-right: none;
+  box-shadow: -4px 0px 8px 4px rgba(0, 0, 0, 0.4);
+  border-radius: 8px 0 0 8px;
+}
+
+.dpad .center {
+  grid-column: 2;
+  grid-row: 2;
+  background-color: grey;
+  cursor: default;
+  border: none;
+  box-shadow: inset 0px 0px 4px 2px rgba(0, 0, 0, 0.4);
+}
+
+.dpad .right {
+  grid-column: 3;
+  grid-row: 2;
+  border-left: none;
+  box-shadow: 4px 0px 8px 4px rgba(0, 0, 0, 0.4);
+  border-radius: 0 8px 8px 0;
+}
+
+.dpad .down {
+  grid-column: 2;
+  grid-row: 3;
+  border-top: none;
+  box-shadow: 0px 4px 8px 4px rgba(0, 0, 0, 0.4);
+  border-radius: 0 0 8px 8px;
+}
+
+.led {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #333;
+  margin: 16px;
+  display: inline-block;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+  border: 2px solid rgb(40, 40, 40);
+}
+
+.led.blue {
+  --led-color: blue;
+}
+
+.led.green {
+  --led-color: green;
+}
+
+.led.yellow {
+  --led-color: yellow;
+}
+
+@keyframes blink {
+
+  0%,
+  100% {
+    background-color: #333;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  }
+
+  50% {
+    background-color: var(--led-color);
+    box-shadow: 0 0 16px var(--led-color);
+  }
+}
+
+.aniStart {
+  animation: blink 500ms infinite;
+}
+
+.loadbar {
+  height: 24px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border-bottom: 1px solid rgba(52, 105, 187, 0.1);
+}
+
+.loadProgress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(52, 105, 187, 0.4);
+  transition: all 2.5s ease-in-out;
+}
+
+#loadProgressText {
+  padding-top: 2px;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  font-size: 12px;
+  color: rgb(80, 80, 80);
+}
+
+.smallScreen {
+  position: relative;
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.mainScreen {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+
+#cardView {
+  height: 100%;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  justify-content: space-evenly;
+  overflow: hidden auto;
+  padding-top: 4px;
+  padding-right: 16px;
+}
+
+#cardView>div {
+  height: 100%;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pokeCard {
+  padding: 8px;
+  width: 24%;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.cardStatus,
+.cardType {
+  gap: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cardStatus {
+  height: 75%;
+}
+
+.cardType {
+  height: 25%;
+  justify-content: center;
+}
+
+.cardStatus p {
+  font-size: 16px;
+}
+
+.cardStatus img,
+.cardType img {
+  max-height: 50%;
+  width: auto;
+}
+
+#barView {
+  height: 100%;
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: hidden;
+  gap: 4px;
+  padding: 4px;
+  transition: all 125ms ease-in-out;
+}
+
+.pokeBar {
+  height: 20%;
+  width: 96%;
+  border-radius: 0 40px 40px 0;
+  display: flex;
+  flex-shrink: 0;
+  padding: 0 8px;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 125ms ease-in-out;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.noPointer {
+  cursor: unset;
+}
+
+.next,
+.last {
+  width: 88%;
+  height: 16%;
+  font-size: 20px;
+}
+
+.next1,
+.last1 {
+  width: 80%;
+  height: 12%;
+  font-size: 16px;
+}
+
+.next2,
+.last2 {
+  width: 72%;
+  height: 8%;
+  font-size: 12px;
+}
+
+.next3,
+.last3 {
+  width: 64%;
+  height: 0%;
+  overflow: hidden;
+}
+
+.barStatus {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.barStatus img {
+  max-height: 100%;
+  max-width: 25%;
+  float: right;
+  flex-shrink: 0;
+}
+
+.pokeBar .pokeName {
+  text-align: left;
+  flex-grow: 1;
+  padding-left: 8px;
+
+}
+
+.barType {
+  height: 100%;
+  width: 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  padding-right: 8px;
+}
+
+.barType img {
+  height: 40%;
+  width: auto;
+}
+
+.iconbar {
+  width: 72px;
+  border-left: 1px solid rgba(52, 105, 187, 0.1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.iconbar>div {
+  flex: 1;
+  width: 100%;
+  height: 33.3%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.iconbar img {
+  height: 64px;
+  width: 64px;
+}
+
+.iconbar img:hover {
+  background-color: rgba(52, 105, 187, 0.4);
+}
+
+.iconbar input[type=search] {
+  position: absolute;
+  right: 0;
+  width: 64px;
+  height: 64px;
+  outline: unset;
+  border: none;
+  padding-left: 72px;
+  background-color: unset;
+  background: url(/assets/icons/magnifying-glass-solid.svg) no-repeat;
+  background-size: 56px;
+  background-position: 4px 4px;
+  transition: all 125ms ease-in-out;
+  font-size: 24px;
+}
+
+.iconbar input[type=search]:hover {
+  background-color: rgba(52, 105, 187, 0.4);
+}
+
+input[type=search]:focus {
+  width: 100%;
+  border: 2px solid rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  background-color: whitesmoke;
+  background-size: 56px;
+  background-position: 4px 4px;
+  z-index: 2;
+}
+
+input[type=search]:focus:hover {
+  background-color: whitesmoke;
+}
+
+.filterContainer {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 2;
+  transform: translate(100%, 0);
+  height: 100% !important;
+  width: 50% !important;
+  background-color: whitesmoke;
+  transition: all 125ms ease-in-out;
+  border: 1px solid rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+}
+
+.filterContainer div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+#typeFilters {
+  height: 85%;
+}
+
+.filterButton {
+  height: 15%;
+  width: 100%;
+}
+
+.filterButton button {
+  width: 25%;
+  height: 80%;
+  font-size: 16px;
+  border: 1px solid #333;
+  box-shadow: inset 0 0 2px 2px rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+}
+
+#typeFilters label {
+  width: 33.3%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+#typeFilters img {
+  height: auto;
+  width: auto;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.pagination a {
+  color: black;
+  float: left;
+  padding: 4px 8px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.pagination a {
+  border-radius: 5px;
+}
+
+.pagination a.active {
+  border-radius: 5px;
+}
+
+.pagination a.active {
+  background-color: rgba(52, 105, 187, 0.4);
+  color: white;
+}
+
+.pagination a:hover:not(.active) {
+  background-color: #ddd;
+}

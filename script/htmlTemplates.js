@@ -1,3 +1,88 @@
+function htmlAbort() {
+  return /*html*/`
+    <p>Schade, viel Spaß auf deiner Reise. Solltest du es dir anders Überlegen Starte das Gerät neu</p>
+  `;
+}
+
+function htmlContinue() {
+  return /*html*/`
+    <p>Daten werder Geladen. Es beginnt sobald genügend Daten vorhanden sind</p>
+    <div id="loaderContainer" class="loaderContainer"></div>
+  `;
+}
+
+function htmlCreateCardPage(page) {
+  document.getElementById('pagination').innerHTML += /*html*/`
+    <a href="#cardView${page}" onclick="openCard(${page}, this)" ${page == 1 ? `id="defaultCard"` : ''}>${page}</a>
+  `;
+  document.getElementById('cardView').innerHTML += /*html*/`
+    <div id="cardView${page}" class="cardView ${page == 1 ? '' : "d-none"}"></div>
+  `;
+}
+
+function htmlDamageEmpty(x) {
+  return /*html*/`
+      ${x == 'start' ? '<ul>' : '</ul>'}
+    `;
+}
+
+function htmlDamageList(counterPoke) {
+  return /*html*/`
+        <li class="dmgImg ${counterPoke.origin}"></li>
+      `;
+}
+
+function htmlLoaderAdd() {
+  return /*html*/`
+    <div class="loader"></div>
+  `;
+}
+
+function htmlRenderBars(pokeIndex = pokemon[currentId]) {
+  if (pokeIndex == 'hidden') {
+    return /*html*/`
+      <div class="pokeBar noPointer"></div>
+    `;
+  } else {
+    return /*html*/`
+    <div class="pokeBar" onclick="changePoke(${pokeIndex.id})" data-type1=${pokeIndex.type1} ${pokeIndex.type2 !== '' ? `data-type2=${pokeIndex.type2}` : ''}>
+      <div class="barStatus">
+        <p class="PokeId">${String(pokeIndex.id).padStart(4, '0')}</p>
+        <img src="${pokeIndex.imgSmall}" alt="image of ${pokeIndex.origin}">
+        <p class="pokeName">${pokeIndex.name}</p>
+      </div>
+      <div class="barType">
+        <img src="${types[types.findIndex((element) => element.origin === pokeIndex.type1)].img}" alt="${pokeIndex.type1}TypeImage">
+        ${pokeIndex.type2 !== '' ? `<img src="${types[types.findIndex((element) => element.origin === pokeIndex.type2)].img}" alt="${pokeIndex.type1}TypeImage">` : ''}
+      </div>
+    </div>
+    `;
+  }
+}
+
+function htmlRenderCards(pokeArray = pokemon, pokeId = 0) {
+  return /*html*/`
+    <div id="pokemon${pokeId}" class="pokeCard" onclick="changePoke(${pokeArray[pokeId].id})" data-type1=${pokeArray[pokeId].type1} ${pokeArray[pokeId].type2 !== '' ? `data-type2=${pokeArray[pokeId].type2}` : ''}>
+      <div class="cardStatus">
+        <p class="PokeId">${String(pokeArray[pokeId].id).padStart(4, '0')}</p>
+        <img src="${pokeArray[pokeId].imgSmall}" alt="image of ${pokeArray[pokeId].origin}">
+        <p class="pokeName">${pokeArray[pokeId].name}</p>
+      </div>
+      <div class="cardType">
+      <img loading="lazy"
+        src="${types[types.findIndex((element) => element.origin === pokeArray[pokeId].type1)].img}" alt="${pokeArray[pokeId].type1}TypeImage">
+        ${pokeArray[pokeId].type2 !== '' ? `<img loading="lazy" src="${types[types.findIndex((element) => element.origin === pokeArray[pokeId].type2)].img}" alt="${pokeArray[pokeId].type1}TypeImage">` : ''}
+  </div>
+</div>
+`;
+}
+
+function htmlRenderEvo(step) {
+  return /*html*/`
+    <div id="${step}" class="evoStepContainer"></div>
+  `;
+}
+
 function htmlRenderEvoPoke(pokeIndex = emptyPoke, step, index = 0) {
   return /*html*/`
     <div id="${step + index}" class="evoStepPokemon">
@@ -11,24 +96,6 @@ function htmlRenderEvoPoke(pokeIndex = emptyPoke, step, index = 0) {
         ''}
     </div>
   `;
-}
-
-function htmlRenderEvo(step) {
-  return /*html*/`
-    <div id="${step}" class="evoStepContainer"></div>
-  `;
-}
-
-function htmlDamageList(counterPoke) {
-  return /*html*/`
-        <li class="dmgImg ${counterPoke.origin}"></li>
-      `;
-}
-
-function htmlDamageEmpty(x) {
-  return /*html*/`
-      ${x == 'start' ? '<ul>' : '</ul>'}
-    `;
 }
 
 function htmlrenderMisc(pokemonId) {
@@ -174,51 +241,17 @@ function htmlrenderStats(pokemonId) {
   `;
 }
 
-function htmlRenderBars(pokeIndex = pokemon[currentId]) {
-  if (pokeIndex == 'hidden') {
-    return /*html*/`
-      <div class="pokeBar noPointer"></div>
-    `;
-  } else {
-    return /*html*/`
-    <div class="pokeBar" onclick="changePoke(${pokeIndex.id})" data-type1=${pokeIndex.type1} ${pokeIndex.type2 !== '' ? `data-type2=${pokeIndex.type2}` : ''}>
-      <div class="barStatus">
-        <p class="PokeId">${String(pokeIndex.id).padStart(4, '0')}</p>
-        <img src="${pokeIndex.imgSmall}" alt="image of ${pokeIndex.origin}">
-        <p class="pokeName">${pokeIndex.name}</p>
-      </div>
-      <div class="barType">
-        <img src="${types[types.findIndex((element) => element.origin === pokeIndex.type1)].img}" alt="${pokeIndex.type1}TypeImage">
-        ${pokeIndex.type2 !== '' ? `<img src="${types[types.findIndex((element) => element.origin === pokeIndex.type2)].img}" alt="${pokeIndex.type1}TypeImage">` : ''}
-      </div>
-    </div>
-    `;
-  }
-}
-
-function htmlRenderCards(pokeArray = pokemon, pokeId = 0) {
+function htmlSaveAbort() {
   return /*html*/`
-    <div id="pokemon${pokeId}" class="pokeCard" onclick="changePoke(${pokeArray[pokeId].id})" data-type1=${pokeArray[pokeId].type1} ${pokeArray[pokeId].type2 !== '' ? `data-type2=${pokeArray[pokeId].type2}` : ''}>
-      <div class="cardStatus">
-        <p class="PokeId">${String(pokeArray[pokeId].id).padStart(4, '0')}</p>
-        <img src="${pokeArray[pokeId].imgSmall}" alt="image of ${pokeArray[pokeId].origin}">
-        <p class="pokeName">${pokeArray[pokeId].name}</p>
-      </div>
-      <div class="cardType">
-      <img loading="lazy"
-        src="${types[types.findIndex((element) => element.origin === pokeArray[pokeId].type1)].img}" alt="${pokeArray[pokeId].type1}TypeImage">
-        ${pokeArray[pokeId].type2 !== '' ? `<img loading="lazy" src="${types[types.findIndex((element) => element.origin === pokeArray[pokeId].type2)].img}" alt="${pokeArray[pokeId].type1}TypeImage">` : ''}
-  </div>
-</div>
+  <p>Daten wurden nicht gespeichert viel Spaß auf deiner Reise.</p>
+  <button onclick="document.getElementById('topScreenInfo').classList.toggle('d-none')">Schließen</button>
 `;
 }
 
-function htmlCreateCardPage(page) {
-  document.getElementById('pagination').innerHTML += /*html*/`
-    <a href="#cardView${page}" onclick="openCard(${page}, this)" ${page == 1 ? `id="defaultCard"` : ''}>${page}</a>
-  `;
-  document.getElementById('cardView').innerHTML += /*html*/`
-    <div id="cardView${page}" class="cardView ${page == 1 ? '' : "d-none"}"></div>
+function htmlSaveFinish() {
+  return /*html*/`
+    <p>Daten wurden gespeichert viel Spaß auf deiner Reise.</p>
+    <button onclick="document.getElementById('topScreenInfo').classList.toggle('d-none')">Schließen</button>
   `;
 }
 
@@ -232,20 +265,6 @@ function htmlSaveQuestion() {
   `;
 };
 
-function htmlSaveFinish() {
-  return /*html*/`
-    <p>Daten wurden gespeichert viel Spaß auf deiner Reise.</p>
-    <button onclick="document.getElementById('topScreenInfo').classList.toggle('d-none')">Schließen</button>
-  `;
-}
-
-function htmlSaveAbort() {
-  return /*html*/`
-  <p>Daten wurden nicht gespeichert viel Spaß auf deiner Reise.</p>
-  <button onclick="document.getElementById('topScreenInfo').classList.toggle('d-none')">Schließen</button>
-`;
-}
-
 function htmlStart() {
   return /*html*/`
     <p>Bisher sind noch keine Einträge in deinem Pokedex vorhanden.</p>
@@ -254,24 +273,5 @@ function htmlStart() {
       <button onclick="userResponse(true)">JA</button>
       <button onclick="userResponse(false)">NEIN</button>
     </div>
-  `;
-}
-
-function htmlContinue() {
-  return /*html*/`
-    <p>Daten werder Geladen. Es beginnt sobald genügend Daten vorhanden sind</p>
-    <div id="loaderContainer" class="loaderContainer"></div>
-  `;
-}
-
-function htmlLoaderAdd() {
-  return /*html*/`
-    <div class="loader"></div>
-  `;
-}
-
-function htmlAbort() {
-  return /*html*/`
-    <p>Schade, viel Spaß auf deiner Reise. Solltest du es dir anders Überlegen Starte das Gerät neu</p>
   `;
 }

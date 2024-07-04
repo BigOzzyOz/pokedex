@@ -44,6 +44,64 @@ async function init() {
   }
 }
 
+function changeClass(direction, bar, factor = 0) {
+  let currentSet = document.querySelectorAll('.pokeBar');
+  const classList = ['last3', 'last2', 'last1', 'last', 'current', 'next', 'next1', 'next2', 'next3'];
+  if (direction > 0 && bar >= 1) {
+    currentSet[bar].classList.add(classList[bar - 1]);
+    currentSet[bar].classList.remove(classList[bar]);
+  } else if (direction < 0 && bar < classList.length - 1) {
+    currentSet[bar].classList.add(classList[bar + 1]);
+    currentSet[bar].classList.remove(classList[bar]);
+  } else {
+    currentSet[bar - factor].classList.add(classList[bar]);
+  };
+}
+
+function changePoke(pokeId) {
+  currentId = pokemon.findIndex(element => element.id == pokeId);
+  updateFilteredId();
+  let screen = document.getElementById('barView').classList.contains('d-none') ? 'cardView' : 'barView';
+  if (screen == 'barView') {
+    renderPokemonBars();
+  } else {
+    renderTopScreen();
+  }
+}
+
+function changeTab(x) {
+  let container = document.querySelectorAll('.topTab');
+  let link = document.querySelectorAll('.topTabLink');
+  let currentIndex = Array.from(container).findIndex(tab => tab.style.display === 'flex');
+  let newIndex;
+  if (currentIndex === -1) return;
+
+  if (x === -100) {
+    newIndex = (currentIndex === 0) ? container.length - 1 : currentIndex - 1;
+  } else if (x === 100) {
+    newIndex = (currentIndex === container.length - 1) ? 0 : currentIndex + 1;
+  }
+  link[newIndex].click();
+}
+
+function changeView(view) {
+  let image = document.getElementById(view);
+  let barView = document.getElementById('barView');
+  let cardView = document.getElementById('cardView');
+  let pagination = document.getElementById('pagination');
+  barView.classList.toggle('d-none');
+  pagination.classList.toggle('d-none');
+  cardView.classList.toggle('d-none');
+  cardView.classList.contains('d-none') ? null : document.getElementById('defaultCard').click();
+  image.src = image.src.indexOf('table') != -1 ? 'assets/icons/bars-solid.svg' : 'assets/icons/table-cells-solid.svg';
+}
+
+function closeMenu(window) {
+  let id = document.getElementById(window);
+  id.style.transform = 'translate(100%, 0)';
+  id.classList.add('d-none');
+}
+
 async function finishDownload() {
   let topScreenInfo = document.getElementById('topScreenInfo');
   topScreenInfo.classList.toggle('d-none');
@@ -65,37 +123,21 @@ function getUserResponse() {
   });
 }
 
-function userResponse(response) {
-  if (window.resolveUserResponse) {
-    window.resolveUserResponse(response);
+function move(event, pokeArray = filteredPokemon.length == 0 ? pokemon : filteredPokemon, id = filteredPokemon.length == 0 ? currentId : filteredId) {
+  let direction = event.deltaY == undefined ? event : event.deltaY;
+  let poke = document.querySelectorAll('.pokeBar');
+  if ((id == 0 && direction < 0) || (id == pokeArray.length - 1 && direction > 0)) {
+    return;
+  } else {
+    for (let i = 0; i < poke.length; i++) {
+      poke[i].style.translate = `0 ${direction > 0 ? '-14.3%' : '14.3%'}`;
+      changeClass(direction, i);
+    }
+    direction > 0 ? currentId++ : currentId--;
+    updateFilteredId();
+    setTimeout(renderPokemonBars, 200);
+    setTimeout(pokemonBg, 201, '.pokeBar');
   }
-}
-
-function renderPokemonBars(id = filteredPokemon.length == 0 ? currentId : filteredId, pokeArray = filteredPokemon.length == 0 ? pokemon : filteredPokemon) {
-  let currentSet = [pokeArray[id - 4], pokeArray[id - 3], pokeArray[id - 2], pokeArray[id - 1], pokeArray[id], pokeArray[id + 1], pokeArray[id + 2], pokeArray[id + 3], pokeArray[id + 4]];
-  let bars = document.getElementById('barView');
-  bars.innerHTML = '';
-
-  for (let i = 0; i < currentSet.length; i++) {
-    bars.innerHTML += htmlRenderBars(currentSet[i] == undefined ? 'hidden' : currentSet[i]);
-    changeClass(0, i);
-  }
-  renderTopScreen();
-  pokemonBg('.pokeBar');
-}
-
-async function renderPokemonCards(pokeArray = filteredPokemon.length == 0 ? pokemon : filteredPokemon) {
-  let cards = document.getElementById('cardView');
-  let pagination = document.getElementById('pagination');
-  cards.innerHTML = '';
-  pagination.innerHTML = '';
-  for (let i = 0; i < pokeArray.length; i++) {
-    let page = Number(Math.floor(i / 100 + 1)).toFixed();
-    document.getElementById(`cardView${page}`) == null ? htmlCreateCardPage(page) : null;
-    document.getElementById(`cardView${page}`).innerHTML += htmlRenderCards(pokeArray, i);
-  }
-  renderTopScreen();
-  pokemonBg('.pokeCard');
 }
 
 function openCard(page, element) {
@@ -113,104 +155,15 @@ function openCard(page, element) {
   element.classList.add('active');
 }
 
-function renderSingleCard(pokeArray = pokemon, i) {
-  let page = Number(Math.floor(i / 100 + 1)).toFixed();
-  document.getElementById(`cardView${page}`) == null ? htmlCreateCardPage(page) : null;
-  document.getElementById(`cardView${page}`).innerHTML += htmlRenderCards(pokeArray, i);
-  pokemonBgSingle(`pokemon${i}`);
-}
-
-function changePoke(pokeId) {
-  currentId = pokemon.findIndex(element => element.id == pokeId);
-  updateFilteredId();
-  let screen = document.getElementById('barView').classList.contains('d-none') ? 'cardView' : 'barView';
-  if (screen == 'barView') {
-    renderPokemonBars();
-  } else {
-    renderTopScreen();
+function openPage(selector, element, color) {
+  let tab = document.getElementsByClassName('topTab');
+  let tabLink = document.getElementsByClassName('topTabLink');
+  for (let i = 0; i < tabLink.length; i++) {
+    tab[i].style.display = 'none';
+    tabLink[i].style.backgroundColor = '';
   }
-}
-
-async function renderLoadingbar() {
-  let loadBar = document.getElementById('loadProgress');
-  let text = document.getElementById('loadProgressText');
-  text.innerHTML = `${pokemon.length} von ${poke.results.length} Pokemon geladen`;
-  loadBar.style.width = `${Number((pokemon.length / poke.results.length) * 100).toFixed(1)}%`;
-}
-
-function searchPokemon() {
-  let searchInput = document.getElementById('search').value;
-  searchInput = searchInput.toLowerCase();
-  let screen = document.getElementById('barView').classList.contains('d-none') ? 'cardView' : 'barView';
-  if (screen == 'barView') {
-    searchBarView(searchInput);
-  } else {
-    searchCardView(searchInput);
-  }
-}
-
-function searchBarView(searchInput) {
-  let searchId = pokemon.findIndex((pokemons) =>
-    pokemons.name.toLowerCase().includes(searchInput) || String(pokemons.id).toLowerCase().padStart(4, '0').includes(searchInput)
-  );
-  currentId = searchId == -1 ? currentId : searchId;
-  updateFilteredId();
-  renderPokemonBars();
-  renderTopScreen();
-}
-
-function searchCardView(searchInput) {
-  const pokeArray = [];
-  pokemon.forEach(pokemons => {
-    pokemons.name.toLowerCase().includes(searchInput) || String(pokemons.id).toLowerCase().padStart(4, '0').includes(searchInput) ? pokeArray.push(pokemons) : null;
-  });
-  let firstPoke = pokeArray.length == 0 ? pokemon[currentId].name : pokeArray[0].name;
-  searchId = pokemon.findIndex(element => element.name == firstPoke);
-  currentId = searchId == -1 ? currentId : searchId;
-  updateFilteredId();
-  renderPokemonCards(pokeArray);
-  renderTopScreen();
-}
-
-function showMenu(window) {
-  let id = document.getElementById(window);
-  id.style.transform = 'translate(0, 0)';
-  id.classList.remove('d-none');
-}
-
-function closeMenu(window) {
-  let id = document.getElementById(window);
-  id.style.transform = 'translate(100%, 0)';
-  id.classList.add('d-none');
-}
-
-function changeView(view) {
-  let image = document.getElementById(view);
-  let barView = document.getElementById('barView');
-  let cardView = document.getElementById('cardView');
-  let pagination = document.getElementById('pagination');
-  barView.classList.toggle('d-none');
-  pagination.classList.toggle('d-none');
-  cardView.classList.toggle('d-none');
-  cardView.classList.contains('d-none') ? null : document.getElementById('defaultCard').click();
-  image.src = image.src.indexOf('table') != -1 ? 'assets/icons/bars-solid.svg' : 'assets/icons/table-cells-solid.svg';
-}
-
-function move(event, pokeArray = filteredPokemon.length == 0 ? pokemon : filteredPokemon, id = filteredPokemon.length == 0 ? currentId : filteredId) {
-  let direction = event.deltaY == undefined ? event : event.deltaY;
-  let poke = document.querySelectorAll('.pokeBar');
-  if ((id == 0 && direction < 0) || (id == pokeArray.length - 1 && direction > 0)) {
-    return;
-  } else {
-    for (let i = 0; i < poke.length; i++) {
-      poke[i].style.translate = `0 ${direction > 0 ? '-14.3%' : '14.3%'}`;
-      changeClass(direction, i);
-    }
-    direction > 0 ? currentId++ : currentId--;
-    updateFilteredId();
-    setTimeout(renderPokemonBars, 200);
-    setTimeout(pokemonBg, 201, '.pokeBar');
-  }
+  document.getElementById(selector).style.display = 'flex';
+  element.style.backgroundColor = color;
 }
 
 function pokemonBg(selector) {
@@ -241,37 +194,10 @@ function pokemonBgSingle(pokeId) {
   };
 }
 
-function changeClass(direction, bar, factor = 0) {
-  let currentSet = document.querySelectorAll('.pokeBar');
-  const classList = ['last3', 'last2', 'last1', 'last', 'current', 'next', 'next1', 'next2', 'next3'];
-  if (direction > 0 && bar >= 1) {
-    currentSet[bar].classList.add(classList[bar - 1]);
-    currentSet[bar].classList.remove(classList[bar]);
-  } else if (direction < 0 && bar < classList.length - 1) {
-    currentSet[bar].classList.add(classList[bar + 1]);
-    currentSet[bar].classList.remove(classList[bar]);
-  } else {
-    currentSet[bar - factor].classList.add(classList[bar]);
-  };
-}
-
-function openPage(selector, element, color) {
-  let tab = document.getElementsByClassName('topTab');
-  let tabLink = document.getElementsByClassName('topTabLink');
-  for (let i = 0; i < tabLink.length; i++) {
-    tab[i].style.display = 'none';
-    tabLink[i].style.backgroundColor = '';
-  }
-  document.getElementById(selector).style.display = 'flex';
-  element.style.backgroundColor = color;
-}
-
-function renderTopScreen(pokemonId = currentId) {
-  let misc = document.getElementById('misc');
-  let stats = document.getElementById('stats');
-  misc.innerHTML = htmlrenderMisc(pokemonId);
-  stats.innerHTML = htmlrenderStats(pokemonId);
-  renderEvo(pokemonId);
+function renderBasePoke(evoChainId, step, container) {
+  let pokeName = evolutionChain[evoChainId].basePoke;
+  let pokeIndex = pokemon[pokemon.findIndex(element => element.origin == pokeName)];
+  container.innerHTML += htmlRenderEvoPoke(pokeIndex, step);
 }
 
 function renderDamage(pokemonId = currentId, damageMulti, x) {
@@ -308,12 +234,6 @@ function renderEvoContainer(evoContainer, step, evoChainId) {
   step == 'base' ? renderBasePoke(evoChainId, step, container) : renderEvolutionPoke(evoChainId, step, container);
 }
 
-function renderBasePoke(evoChainId, step, container) {
-  let pokeName = evolutionChain[evoChainId].basePoke;
-  let pokeIndex = pokemon[pokemon.findIndex(element => element.origin == pokeName)];
-  container.innerHTML += htmlRenderEvoPoke(pokeIndex, step);
-}
-
 function renderEvolutionPoke(evoChainId, step, container) {
   for (let i = 0; i < evolutionChain[evoChainId][step].length; i++) {
     let pokeName = evolutionChain[evoChainId][step][i].name;
@@ -322,75 +242,63 @@ function renderEvolutionPoke(evoChainId, step, container) {
   }
 }
 
-function changeTab(x) {
-  let container = document.querySelectorAll('.topTab');
-  let link = document.querySelectorAll('.topTabLink');
-  let currentIndex = Array.from(container).findIndex(tab => tab.style.display === 'flex');
-  let newIndex;
-  if (currentIndex === -1) return;
+async function renderLoadingbar() {
+  let loadBar = document.getElementById('loadProgress');
+  let text = document.getElementById('loadProgressText');
+  text.innerHTML = `${pokemon.length} von ${poke.results.length} Pokemon geladen`;
+  loadBar.style.width = `${Number((pokemon.length / poke.results.length) * 100).toFixed(1)}%`;
+}
 
-  if (x === -100) {
-    newIndex = (currentIndex === 0) ? container.length - 1 : currentIndex - 1;
-  } else if (x === 100) {
-    newIndex = (currentIndex === container.length - 1) ? 0 : currentIndex + 1;
+function renderPokemonBars(id = filteredPokemon.length == 0 ? currentId : filteredId, pokeArray = filteredPokemon.length == 0 ? pokemon : filteredPokemon) {
+  let currentSet = [pokeArray[id - 4], pokeArray[id - 3], pokeArray[id - 2], pokeArray[id - 1], pokeArray[id], pokeArray[id + 1], pokeArray[id + 2], pokeArray[id + 3], pokeArray[id + 4]];
+  let bars = document.getElementById('barView');
+  bars.innerHTML = '';
+
+  for (let i = 0; i < currentSet.length; i++) {
+    bars.innerHTML += htmlRenderBars(currentSet[i] == undefined ? 'hidden' : currentSet[i]);
+    changeClass(0, i);
   }
-  link[newIndex].click();
+  renderTopScreen();
+  pokemonBg('.pokeBar');
 }
 
-function filterTypes() {
-  let filterTypes = [];
-  let filter = document.querySelectorAll('#typeFilters input[type=checkbox]:checked');
-  filteredPokemon.splice(0, filteredPokemon.length);
-  if (filter.length == 0 || filter.length == 18) {
-    resetFilter();
-  } else {
-    filter.forEach(type => { filterTypes.push(type.value); });
-    filterPokemon(filterTypes);
+async function renderPokemonCards(pokeArray = filteredPokemon.length == 0 ? pokemon : filteredPokemon) {
+  let cards = document.getElementById('cardView');
+  let pagination = document.getElementById('pagination');
+  cards.innerHTML = '';
+  pagination.innerHTML = '';
+  for (let i = 0; i < pokeArray.length; i++) {
+    let page = Number(Math.floor(i / 100 + 1)).toFixed();
+    document.getElementById(`cardView${page}`) == null ? htmlCreateCardPage(page) : null;
+    document.getElementById(`cardView${page}`).innerHTML += htmlRenderCards(pokeArray, i);
   }
+  renderTopScreen();
+  pokemonBg('.pokeCard');
 }
 
-function filterPokemon(types) {
-  for (let i = 0; i < pokemon.length; i++) {
-    const poke = pokemon[i];
-    types.forEach(type => {
-      poke.type1 == type || poke.type2 == type ? filteredPokemon.push(poke) : null;
-    });
-  }
-  let firstPoke = filteredPokemon.length == 0 ? pokemon[currentId].name : filteredPokemon[0].name;
-  searchId = pokemon.findIndex(element => element.name == firstPoke);
-  currentId = searchId == -1 ? currentId : searchId;
-  renderPokemonCards();
-  renderPokemonBars();
-  closeMenu('filter');
+function renderSingleCard(pokeArray = pokemon, i) {
+  let page = Number(Math.floor(i / 100 + 1)).toFixed();
+  document.getElementById(`cardView${page}`) == null ? htmlCreateCardPage(page) : null;
+  document.getElementById(`cardView${page}`).innerHTML += htmlRenderCards(pokeArray, i);
+  pokemonBgSingle(`pokemon${i}`);
 }
 
-function resetFilter() {
-  let filter = document.querySelectorAll('#typeFilters input[type=checkbox]:checked');
-  filter.forEach(element => {
-    element.checked = false;
-  });
-  filteredPokemon.splice(0, filteredPokemon.length);
-  filteredId = 0;
-  currentId = 0;
-  renderPokemonCards();
-  renderPokemonBars();
-  closeMenu('filter');
+function renderTopScreen(pokemonId = currentId) {
+  let misc = document.getElementById('misc');
+  let stats = document.getElementById('stats');
+  misc.innerHTML = htmlrenderMisc(pokemonId);
+  stats.innerHTML = htmlrenderStats(pokemonId);
+  renderEvo(pokemonId);
 }
 
-function updateFilteredId() {
+function showMenu(window) {
+  let id = document.getElementById(window);
+  id.style.transform = 'translate(0, 0)';
+  id.classList.remove('d-none');
+}
 
-  if (filteredPokemon.length == 0) {
-    return;
-  } else {
-    let filter;
-    if (pokemon[currentId].id > filteredPokemon[filteredId].id) {
-      filter = filteredPokemon.findIndex(element => element.id >= pokemon[currentId].id);
-    } else if (pokemon[currentId].id < filteredPokemon[filteredId].id) {
-      filter = filteredPokemon.findLastIndex(element => element.id <= pokemon[currentId].id);
-    } else {
-      filter = filteredId;
-    }
-    filteredId = filter == - 1 ? filteredId : filter;
-    currentId = pokemon.findIndex(element => element.id === filteredPokemon[filteredId].id);
+function userResponse(response) {
+  if (window.resolveUserResponse) {
+    window.resolveUserResponse(response);
   }
 }

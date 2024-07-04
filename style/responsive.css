@@ -1,0 +1,346 @@
+@media (max-width: 1399.98px) {
+  .statsCont p {
+    font-size: 16px;
+  }
+}
+
+@media (max-height: 1199.98px) {
+  header {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 1199.98px) {
+  .screen {
+    margin: 16px;
+  }
+
+  #typeFilters img {
+    height: 20px;
+  }
+}
+
+@media (max-height: 991.98px) {
+  header {
+    font-size: 16px;
+  }
+
+  .screen {
+    margin: 16px;
+  }
+
+  #misc td {
+    font-size: 16px;
+  }
+
+  .statsCont p {
+    font-size: 16px;
+  }
+
+  .damageTypes>img {
+    height: 24px;
+  }
+
+  .topScreen nav,
+  .topScreen ul {
+    font-size: 12px;
+  }
+
+  .statContainer {
+    height: 30%;
+  }
+
+  .dmgImg {
+    height: 15px !important;
+    width: 35px !important;
+  }
+
+  .dpad {
+    grid-template-columns: repeat(3, 40px);
+    grid-template-rows: repeat(3, 40px);
+  }
+
+  .cardType {
+    flex-direction: row;
+  }
+
+  #limiter {
+    height: 200dvh;
+  }
+
+  .divider {
+    display: none;
+  }
+
+  .pokedex {
+    scroll-snap-align: start end;
+  }
+
+  header {
+    height: 5%;
+
+  }
+
+  footer {
+    height: 5%;
+  }
+
+}
+
+@media (max-width: 991.98px) {
+  .pokeCard {
+    width: 30%;
+  }
+
+  .filterButton button {
+    font-size: 12px;
+  }
+
+  .logo {
+    display: none;
+  }
+
+  .iconbar img {
+    height: 40px;
+    width: 40px;
+  }
+
+  .iconbar input[type="search"] {
+    height: 40px;
+    width: 40px;
+    padding-left: 48px;
+    background-size: 32px;
+  }
+
+  input[type="search"]:focus {
+    width: 100%;
+  }
+
+  .iconbar {
+    width: 48px;
+  }
+
+  .statsCont {
+    width: 95%;
+  }
+
+  .statContainer {
+    height: 30%;
+  }
+
+  .barType {
+    height: 60%;
+  }
+
+  .damageTypes>img {
+    height: 24px;
+  }
+
+  #misc td {
+    font-size: 16px;
+  }
+
+}
+
+@media (max-width: 767.98px) {
+  .pagination {
+    gap: 0;
+  }
+
+  .pokeBar {
+    height: 20%;
+    width: 100%;
+    padding: 0 4px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .next,
+  .last {
+    width: 92%;
+    height: 16%;
+    font-size: 16px;
+  }
+
+  .next1,
+  .last1 {
+    width: 84%;
+    height: 12%;
+    font-size: 12px;
+  }
+
+  .next2,
+  .last2 {
+    width: 76%;
+    height: 8%;
+    font-size: 8px;
+  }
+
+  .next3,
+  .last3 {
+    width: 68%;
+    height: 0%;
+    overflow: hidden;
+  }
+
+  .filterContainer {
+    width: 100% !important;
+  }
+
+  .filterButton button {
+    height: 30%;
+    width: 80%;
+  }
+
+  .filterButton {
+    flex-direction: column;
+  }
+
+  #typeFilters label {
+    width: 50%;
+  }
+
+  .dpad {
+    grid-template-columns: repeat(3, 40px);
+    grid-template-rows: repeat(3, 40px);
+  }
+
+  .smallScreen {
+    flex-direction: column-reverse;
+  }
+
+  .iconbar {
+    flex-direction: row-reverse;
+    height: 48px;
+    width: 100%;
+  }
+
+  .mainScreen {
+    height: 60%;
+  }
+
+  .iconbar>div {
+    height: 100%;
+    width: 33.3%;
+  }
+
+  #evo {
+    flex-direction: column;
+  }
+
+  #evo p {
+    font-size: 12px;
+  }
+
+  .evoStepContainer {
+    min-width: unset;
+    width: 100%;
+    height: 33.3%;
+  }
+
+  #stats {
+    flex-direction: column;
+  }
+
+  #stats * {
+    font-size: 12px;
+  }
+
+  #stats>div {
+    width: 100%;
+  }
+}
+
+@media (max-height: 575.98px) {
+  .logo {
+    display: none;
+  }
+
+  .led {
+    margin: 4px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .dmgImg {
+    height: 10px !important;
+  }
+
+  .damageMulti>ul>* {
+    flex-wrap: nowrap;
+  }
+
+  .damageTypes>img {
+    height: 16px;
+  }
+
+  .topScreen nav,
+  .topScreen ul {
+    font-size: 12px;
+    word-wrap: break-word;
+  }
+
+  #misc td {
+    font-size: 12px;
+  }
+
+  #misc>* {
+    width: 100%;
+    max-height: 50%;
+  }
+
+  #misc {
+    flex-direction: column;
+  }
+
+  .pagination a {
+    padding: 2px 4px;
+  }
+
+  .pokeCard {
+    width: 48%;
+  }
+
+  header {
+    font-size: 10px !important;
+  }
+
+  .bottomScreen .screen {
+    width: 100%;
+  }
+
+  .controller {
+    display: none;
+  }
+
+  .topScreen,
+  .bottomScreen {
+    width: 100vw;
+  }
+
+  .pokeBar {
+    font-size: 16px;
+  }
+
+  .next,
+  .last {
+    font-size: 12px;
+  }
+
+  .next1,
+  .last1 {
+    font-size: 8px;
+  }
+
+  .next2,
+  .last2 {
+    font-size: 4px;
+  }
+
+  .next3,
+  .last3 {
+    width: 64%;
+    height: 0%;
+    overflow: hidden;
+  }
+}

@@ -1,15 +1,3 @@
-function pushEvolution(evo, evoChainIndex) {
-  let firstEvolution = [];
-  let secondEvolution = [];
-  evolutionChain.push({
-    'id': evo.id,
-    'basePoke': evo.chain.species.name,
-    'firstEvolution': [],
-    'secondEvolution': [],
-  });
-  firstEvo(evo, evoChainIndex);
-}
-
 function firstEvo(evo, evoChainIndex) {
   let firstEvolution = [];
   let secondEvolution;
@@ -28,18 +16,16 @@ function firstEvo(evo, evoChainIndex) {
   evolutionChain[evoChainIndex].secondEvolution = secondEvolution;
 }
 
-function secondEvo(evo, firstIndex) {
+function pushEvolution(evo, evoChainIndex) {
+  let firstEvolution = [];
   let secondEvolution = [];
-  if (evo.chain.evolves_to[firstIndex].evolves_to.length > 0) {
-    for (let j = 0; j < evo.chain.evolves_to[firstIndex].evolves_to.length; j++) {
-      secondEvolution.push({
-        'name': evo.chain.evolves_to[firstIndex].evolves_to[j].species.name,
-        'trigger': evo.chain.evolves_to[firstIndex].evolves_to[j].evolution_details.length > 0 ? evo.chain.evolves_to[firstIndex].evolves_to[j].evolution_details[0].trigger.name : null,
-        'level': evo.chain.evolves_to[firstIndex].evolves_to[j].evolution_details.length > 0 ? evo.chain.evolves_to[firstIndex].evolves_to[j].evolution_details[0].trigger.name !== 'level-up' ? null : evo.chain.evolves_to[firstIndex].evolves_to[j].evolution_details[0].min_level : null,
-      });
-    }
-    return secondEvolution;
-  }
+  evolutionChain.push({
+    'id': evo.id,
+    'basePoke': evo.chain.species.name,
+    'firstEvolution': [],
+    'secondEvolution': [],
+  });
+  firstEvo(evo, evoChainIndex);
 }
 
 function pushPokemon(info, species, chain) {
@@ -75,4 +61,18 @@ function pushType(typeInfo) {
     'name': typeInfo.names[typeInfo.names.findLastIndex((element) => element.language.name == 'de')]?.name ?? 'Unbekannt',
     'img': `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vii/lets-go-pikachu-lets-go-eevee/${typeInfo.id}.png`
   });
+}
+
+function secondEvo(evo, firstIndex) {
+  let secondEvolution = [];
+  if (evo.chain.evolves_to[firstIndex].evolves_to.length > 0) {
+    for (let j = 0; j < evo.chain.evolves_to[firstIndex].evolves_to.length; j++) {
+      secondEvolution.push({
+        'name': evo.chain.evolves_to[firstIndex].evolves_to[j].species.name,
+        'trigger': evo.chain.evolves_to[firstIndex].evolves_to[j].evolution_details.length > 0 ? evo.chain.evolves_to[firstIndex].evolves_to[j].evolution_details[0].trigger.name : null,
+        'level': evo.chain.evolves_to[firstIndex].evolves_to[j].evolution_details.length > 0 ? evo.chain.evolves_to[firstIndex].evolves_to[j].evolution_details[0].trigger.name !== 'level-up' ? null : evo.chain.evolves_to[firstIndex].evolves_to[j].evolution_details[0].min_level : null,
+      });
+    }
+    return secondEvolution;
+  }
 }
