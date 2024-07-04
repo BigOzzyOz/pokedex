@@ -22,7 +22,7 @@ const emptyPoke = {
   },
   'flavorText': 'Hier Wird noch geladen',
   'genus': 'Placeholder',
-  'evolution': 0,
+  'evolution': 1,
 };
 const types = [];
 const evolutionChain = [];
@@ -40,7 +40,7 @@ async function init() {
     screen.forEach(element => { element.classList.toggle('d-none'); });
     document.getElementById('defaultTab').click();
   } else {
-    setTimeout(start, 5000);
+    setTimeout(start, 2500);
   }
 }
 
@@ -238,7 +238,8 @@ function renderEvolutionPoke(evoChainId, step, container) {
   for (let i = 0; i < evolutionChain[evoChainId][step].length; i++) {
     let pokeName = evolutionChain[evoChainId][step][i].name;
     let pokeIndex = pokemon[pokemon.findIndex(element => element.origin == pokeName)];
-    container.innerHTML += htmlRenderEvoPoke(pokeIndex, step, i);
+    let index = pokeIndex ? i : 0;
+    container.innerHTML += htmlRenderEvoPoke(pokeIndex, step, index);
   }
 }
 
