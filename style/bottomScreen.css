@@ -287,14 +287,14 @@
   align-items: flex-start;
   justify-content: center;
   overflow: hidden;
-  gap: 4px;
+  gap: 2px;
   padding: 4px;
   transition: all 125ms ease-in-out;
 }
 
 .pokeBar:hover,
 .pokeCard:hover {
-  transform: scale(0.9);
+  transform: scale(0.97);
   opacity: 0.8;
   box-shadow: inset 0 0 8px 4px rgba(0, 0, 0, 0.4);
 }
@@ -374,7 +374,7 @@
 
 .barType {
   height: 100%;
-  width: 10%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -384,7 +384,7 @@
 
 .barType img {
   height: 40%;
-  width: auto;
+  max-width: 100%;
 }
 
 .iconbar {

@@ -45,7 +45,7 @@ function htmlRenderBars(pokeIndex = pokemon[currentId]) {
     `;
   } else {
     return /*html*/`
-    <div class="pokeBar" onclick="changePoke(${pokeIndex.id})" data-type1=${pokeIndex.type1} ${pokeIndex.type2 !== '' ? `data-type2=${pokeIndex.type2}` : ''}>
+    <div class="pokeBar" onclick="changePoke(${pokeIndex.id})" onwheel="move(event)" data-type1=${pokeIndex.type1} ${pokeIndex.type2 !== '' ? `data-type2=${pokeIndex.type2}` : ''}>
       <div class="barStatus">
         <p class="PokeId">${String(pokeIndex.id).padStart(4, '0')}</p>
         <img src="${pokeIndex.imgSmall}" alt="image of ${pokeIndex.origin}">

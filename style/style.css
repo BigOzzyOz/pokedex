@@ -22,7 +22,7 @@
 }
 
 *::-webkit-scrollbar {
-  width: 12px;
+  width: 6px;
 }
 
 *::-webkit-scrollbar-button {
@@ -38,7 +38,7 @@
 *::-webkit-scrollbar-thumb {
   background-color: #3469bb;
   border-radius: 8px;
-  width: 8px;
+  width: 4px;
 }
 
 @supports not selector(::-webkit-scrollbar) {

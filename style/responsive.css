@@ -110,10 +110,12 @@
     width: 40px;
     padding-left: 48px;
     background-size: 32px;
+    right: 10%;
   }
 
   input[type="search"]:focus {
     width: 100%;
+    right: 0;
   }
 
   .iconbar {
@@ -235,7 +237,10 @@
   .evoStepContainer {
     min-width: unset;
     width: 100%;
-    height: 33.3%;
+    min-height: 33.3%;
+    flex-direction: row;
+    padding: 0;
+    flex-wrap: wrap;
   }
 
   #stats {
@@ -244,10 +249,15 @@
 
   #stats * {
     font-size: 12px;
+    text-align: center;
   }
 
   #stats>div {
     width: 100%;
+  }
+
+  .statOverview {
+    height: 40%;
   }
 }
 
@@ -262,12 +272,12 @@
 }
 
 @media (max-width: 575.98px) {
-  .dmgImg {
-    height: 10px !important;
+  #stats * {
+    font-size: 10px;
   }
 
-  .damageMulti>ul>* {
-    flex-wrap: nowrap;
+  .dmgImg {
+    height: 10px !important;
   }
 
   .damageTypes>img {
@@ -281,7 +291,8 @@
   }
 
   #misc td {
-    font-size: 12px;
+    font-size: 10px;
+    text-align: center;
   }
 
   #misc>* {
@@ -315,7 +326,7 @@
 
   .topScreen,
   .bottomScreen {
-    width: 100vw;
+    width: 100%;
   }
 
   .pokeBar {
